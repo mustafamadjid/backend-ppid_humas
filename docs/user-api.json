@@ -1,0 +1,253 @@
+{
+    "openapi": "3.1.1",
+    "info": {
+        "title": "User API",
+        "description": "User API Documentation",
+        "version": "1.0"
+    },
+    "servers": [{ "url": "http://localhost" }],
+    "paths": {
+        "/ppid/user":{
+            "post": {
+                "description": "Registrasi user (admin) baru",
+                "requestBody":{
+                    "content": {
+                        "application/json":{
+                            "examples": {
+                                "admin baru":{
+                                    "description": "Registrasi akun admin baru",
+                                    "value":{
+                                        "username": "adimas",
+                                        "email": "adimas@gmail.com",
+                                        "password": "rahasia12345",
+                                        "role": "admin"
+                                    }
+                                    
+                                }
+                            },
+                            "schema":{
+                                "type" : "object",
+                                "required": ["username", "email", "password", "role"],
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "role": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User baru berhasil diregistrasikan",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "status": 201,
+                                    "message": "User baru berhasil diregistrasikan",
+                                    "data": {
+                                        "username": "adimas",
+                                        "email": "adimas@gmail.com",
+                                        "role": "admin"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "User baru gagal diregistrasikan",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                  "validationerror":{
+                                    "description": "User baru gagal diregistrasikan",
+                                    "value": {
+                                        "status": 422,
+                                        "message": "User baru gagal diregistrasikan",
+                                        "errors": {
+                                            "username": [
+                                                "The username field is required."
+                                            ],
+                                            "email": [
+                                                "The email field is required."
+                                            ],
+                                            "password": [
+                                                "The password field is required."
+                                            ],
+                                            "role": [
+                                                "The role field is required."
+                                            ]
+                                        }
+                                    }
+                                  }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "description": "Mendapatkan data semua user",
+                "responses": {
+                    "200": {
+                        "description": "Menampilkan semua user",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "status": 200,
+                                    "message": "Data semua user berhasil diambil",
+                                    "data": [
+                                        {
+                                            "username": "adimas",
+                                            "email": "adimas@gmail.com",
+                                            "role": "admin"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500":{
+                        "description": "Gagal mengambil data user",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "status": 500,
+                                    "message": "Gagal mengambil data user",
+                                    "error": "Gagal mengambil data user"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Memperbarui data user",
+                "requestBody":{
+                    "content": {
+                        "application/json":{
+                            "examples": {
+                                "user baru":{
+                                    "description": "Memperbarui data user",
+                                    "value":{
+                                        "username": "adimas",
+                                        "email": "adimas@gmail.com",
+                                        "role": "admin"
+                                    }
+                                }
+                            },
+                            "schema":{
+                                "type" : "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "role": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Data user berhasil diperbarui",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "status": 200,
+                                    "message": "Data user berhasil diupdate",
+                                    "data": {
+                                        "username": "adimas",
+                                        "email": "adimas@gmail.com",
+                                        "role": "admin"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "status": 404,
+                                    "message": "User tidak ditemukan"
+                                }
+                            }
+                        }
+                    },
+                    "500":{
+                        "description": "Gagal memperbarui data user",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "status": 500,
+                                    "message": "Gagal memperbarui data user",
+                                    "error": "Gagal memperbarui data user"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Menghapus data user",
+                "responses": {
+                    "200": {
+                        "description": "Data user berhasil dihapus",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "status": 200,
+                                    "message": "Data user berhasil dihapus",
+                                    "data": {
+                                        "username": "adimas",
+                                        "email": "adimas@gmail.com",
+                                        "role": "admin"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "status": 404,
+                                    "message": "User tidak ditemukan"
+                                }
+                            }
+                        }
+                    },
+                    "500":{
+                        "description": "Gagal menghapus data user",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "status": 500,
+                                    "message": "Gagal menghapus data user",
+                                    "error": "Gagal menghapus data user"
+                                }
+                            }
+                        }
+                    }
+                                    }
+            }
+        }
+    }
+}
