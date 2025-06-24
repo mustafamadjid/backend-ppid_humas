@@ -48,7 +48,7 @@ class DynamicMenuController extends Controller
                 'data' => $data
             ], 200);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw new HttpException(500, $e->getMessage());
         }
     }
@@ -105,7 +105,7 @@ class DynamicMenuController extends Controller
                 'status' => 404,
                 'message' => 'Menu tidak ditemukan'
             ], 404);
-        }catch (\Exception $e) {
+        }catch (\Throwable $e) {
             throw new HttpException(500, $e->getMessage());
         }
     }
@@ -124,7 +124,7 @@ class DynamicMenuController extends Controller
                 'status' => 404,
                 'message' => 'Menu tidak ditemukan'
             ], 404);
-        }catch (\Exception $e) {
+        }catch (\Throwable $e) {
             throw new HttpException(500, $e->getMessage());
         }
     }

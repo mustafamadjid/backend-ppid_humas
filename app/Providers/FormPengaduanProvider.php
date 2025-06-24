@@ -15,7 +15,7 @@ class FormPengaduanProvider extends ServiceProvider implements DeferrableProvide
     
     public function register(): void
     {
-        $this->app->singleton(FormPengaduanInterface::class,FormPengaduanImpl::class);
+        $this->app->bind(FormPengaduanInterface::class,FormPengaduanImpl::class);
     }
 
     /**

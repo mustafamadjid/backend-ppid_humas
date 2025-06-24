@@ -15,7 +15,7 @@ class DynamicMenuImpl implements DynamicMenuInterface
             ]);
             Log::info("Data menu berhasil ditambahkan",["time" => now()]);
             return $menu;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error("Data menu gagal ditambahkan",["time" => now()]);
             throw $e;
         }
@@ -26,7 +26,7 @@ class DynamicMenuImpl implements DynamicMenuInterface
             $menu = DynamicMenu::all();
             Log::info("Data menu berhasil diambil",["time" => now()]);
             return $menu;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error("Data menu gagal diambil",["time" => now()]);
             throw $e;
         }
@@ -38,7 +38,7 @@ class DynamicMenuImpl implements DynamicMenuInterface
             $menu->update($data);
             Log::info("Data menu berhasil diupdate",["time" => now()]);
             return $menu;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error("Data menu gagal diupdate",["time" => now()]);
             throw $e;
         }
@@ -50,7 +50,7 @@ class DynamicMenuImpl implements DynamicMenuInterface
             $menu->delete();
             Log::info("Data menu berhasil dihapus",["time" => now()]);
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error("Data menu gagal dihapus",["time" => now()]);
             throw $e;
         }

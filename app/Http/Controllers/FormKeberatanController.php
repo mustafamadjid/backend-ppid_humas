@@ -2,58 +2,77 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\FormPengaduan;
-use App\Services\FormPengaduanInterface;
+use App\Models\FormKeberatan;
+use App\Services\FormKeberatanInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class FormPengaduanController extends Controller
+class FormKeberatanController extends Controller
 {
-    private FormPengaduanInterface $formPengaduan;
-    public function __construct(FormPengaduanInterface $formPengaduan){
-        $this->formPengaduan = $formPengaduan;
+    private FormKeberatanInterface $formKeberatanService;
+
+    public function __construct(FormKeberatanInterface $formKeberatanService)
+    {
+        $this->formKeberatanService = $formKeberatanService;
+    }
+    public function index(){
+        try {
+            $data = $this->formKeberatanService->getAllFormKeberatan();
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Data semua form keberatan berhasil diambil',
+                'data' => $data
+            ], 200);
+        } catch (\Throwable $e) {
+            throw new HttpException(500, $e->getMessage());
+        }
     }
 
-    public function store (Request $request){
+    public function store(Request $request){
         try {
             $validated = Validator::make($request->all(), [
-                'nama_pelapor'=>[
+                'nama_pemohon'=>[
                     'required',
                     'string',
                     'max:300',
                 ],
-                'no_ktp_pelapor'=>[
+                'no_ktp_pemohon'=>[
                     'required',
                     'string',
                     'max:16',
                 ],
-                'email_pelapor'=>[
+                'email_pemohon'=>[
                     'required',
                     'string',
                     'email',
                     'max:255',
                 ],
-                'no_telp_pelapor'=>[
+                'alamat_pemohon' =>[
+                    'required',
+                    'string',
+                ],
+                'no_telp_pemohon'=>[
                     'required',
                     'string',
                     'max:13',
                 ],
-                'nama_terlapor' => [
+                'pekerjaan_pemohon' => [
                     'required',
                     'string',
                     'max:300',
                 ],
-                'jabatan_terlapor' => [
+                'tujuan_pengajuan' => [
                     'required',
                     'string',
                     'max:300',
                 ],
-                'deskripsi_penyalahgunaan' => [
+                'alasan_pengajuan' => [
                     'required',
                     'string',
+                    'max:300',
                 ],
                 'file_bukti' => [
                     'required',
@@ -69,37 +88,21 @@ class FormPengaduanController extends Controller
                     'errors' => $validated->errors()
                 ]);
             }
-            
+
             $file = $request->file('file_bukti');
             $uniqueName = uniqid() . '_' . $file->getClientOriginalName();
-            $path = $file->storePubliclyAs('bukti_pengaduan', $uniqueName, 'public');
+            $path = $file->storePubliclyAs('bukti_pengajuan_keberatan', $uniqueName, 'public');
 
             $data = array_merge(
                 $validated->validated(),
                 ['path_file_bukti' => $path]
             );
+
+            $this->formKeberatanService->createFormKeberatan($data);
             
-
-            $this->formPengaduan->createFormPengaduan($data);
-
             return response()->json([
                 'status' => 200,
-                'message' => 'Data pengaduan berhasil ditambahkan',
-                'data' => $data
-            ]);
-
-        } catch (\Throwable $e) {
-            throw new HttpException(500, $e->getMessage());
-        }
-    } 
-
-    public function index(){
-        try {
-            $data = $this->formPengaduan->getFormPengaduan();
-
-            return response()->json([
-                'status' => 200,
-                'message' => 'Data semua pengaduan berhasil diambil',
+                'message' => 'Data form keberatan berhasil ditambahkan',
                 'data' => $data
             ], 200);
         } catch (\Throwable $e) {
@@ -107,20 +110,19 @@ class FormPengaduanController extends Controller
         }
     }
 
-    public function destroy( $id){
+    public function destroy($id){
         try {
-            $dataForm = FormPengaduan::findOrFail($id);
-
-            $this->formPengaduan->deleteFormPengaduan($dataForm);
+            $form = FormKeberatan::findOrFail($id);
+            $this->formKeberatanService->deleteFormKeberatan($form);
 
             return response()->json([
                 'status' => 200,
-                'message' => 'Data pengaduan berhasil dihapus'
+                'message' => 'Data form keberatan berhasil dihapus'
             ], 200);
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 'status' => 404,
-                'message' => 'Pengaduan tidak ditemukan'
+                'message' => 'Data form keberatan tidak ditemukan'
             ], 404);
         }catch(\Throwable $e) {
             throw new HttpException(500, $e->getMessage());

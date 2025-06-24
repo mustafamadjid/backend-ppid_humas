@@ -33,8 +33,12 @@ class UserRegistrationServiceController extends Controller
                 Rule::unique('users', 'username'),
             ],
 
-            'password' => 'required|string|min:6',
-                'email' => [
+            'password' => [
+                'required',
+                'string', 
+                'min:6'],
+
+            'email' => [
                 'required',
                 'string',
                 'email',
@@ -68,7 +72,7 @@ class UserRegistrationServiceController extends Controller
                 'role' => $user->role
             ]
         ], 201);
-       } catch (\Exception $e) {
+       } catch (\Throwable $e) {
         throw new HttpException(500, $e->getMessage());
        }
     }

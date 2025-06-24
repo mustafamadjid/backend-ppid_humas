@@ -3,9 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use App\Services\FormPengaduanInterface;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
@@ -56,7 +53,7 @@ class FormPengaduanServiceTest extends TestCase
 
         $completeData = array_merge($data, ['file_bukti' => $file]);
 
-        $this->post('/ppid/pengaduan', $completeData)
+        $this->withHeader('Authorization', 'Bearer '.$this->userToken())->post('/ppid/pengaduan', $completeData)
         -> assertStatus(200)
         ->assertJson([
             'status' => 200,

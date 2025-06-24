@@ -18,13 +18,22 @@ class AuthController extends Controller
     }
     public function login(Request $request)
     {
+        
         try {
             $validated = Validator::make($request->all(), [
                 'username' => [
-                    'required',
+                    'sometimes',
                     'string',
                 ],
-                'password' => 'required|string|min:6',
+                'email' => [
+                    'sometimes',
+                    'email'
+                ],
+                'password' => [
+                    'sometimes',
+                    'string',
+                    'min:6',
+                ],
             ]);
     
             if ($validated->fails()) {
@@ -34,32 +43,69 @@ class AuthController extends Controller
                     'error' => $validated->errors()
                 ], 422);
             }
-    
-            $user = User::where('username', $validated->validated()['username'])->firstOrFail();
-            $auth = $this->authService->doLogin($user, $validated->validated()['password']);
 
-            if ($auth === false) {
-                return response()->json([
-                    'status' => 401,
-                    'message' => 'Password salah untuk username : '.$validated->validated()['username'],
-                ], 401);
-            }
+            if(empty($validated->validated()['username'])){
+                if(empty($validated->validated()['email'])){
+                    return response()->json([
+                        'status' => 422,
+                        'message' => 'Data login tidak sesuai',
+                        'error' => $validated->errors()
+                    ], 422);
+                }else{
+                    $user = User::where('email', $validated->validated()['email'])->first();
 
-            return response()->json([
-                'status' => 200,
-                'message' => 'Login berhasil',
-                'data' => [
-                    'token' => $auth
-                ]
-                ]);
+                    if($user === null){
+                        return response()->json([
+                            'status' => 404,
+                            'message' => 'User dengan email : '.$validated->validated()['email'].' tidak ditemukan',
+                        ], 404);
+                    }
 
-        } catch (ModelNotFoundException $e) {
-            return response()->json([
-                'status' => 404,
-                'message' => 'User dengan username : '.$validated->validated()['username'].' tidak ditemukan ',
-                'error' => $e->getMessage()
-            ], 404);
-        }catch (\Exception $e) {
+                    $auth = $this->authService->doLogin($user, $validated->validated()['password']);
+        
+                    if (!$auth) {
+                        return response()->json([
+                            'status' => 401,
+                            'message' => 'Password salah untuk email : '.$validated->validated()['email'],
+                        ], 401);
+                    }
+        
+                    return response()->json([
+                        'status' => 200,
+                        'message' => 'Login berhasil',
+                        'data' => [
+                            'token' => $auth
+                        ]
+                        ]);
+                     }
+                 }else{
+                    $user = User::where('username', $validated->validated()['username'])->first();
+
+                    if($user === null){
+                        return response()->json([
+                            'status' => 404,
+                            'message' => 'User dengan username : '.$validated->validated()['username'].' tidak ditemukan',
+                        ], 404);
+                    }
+
+                    $auth = $this->authService->doLogin($user, $validated->validated()['password']);
+        
+                    if (!$auth) {
+                        return response()->json([
+                            'status' => 401,
+                            'message' => 'Password salah untuk username : '.$validated->validated()['username'],
+                        ], 401);
+                    }
+        
+                    return response()->json([
+                        'status' => 200,
+                        'message' => 'Login berhasil',
+                        'data' => [
+                            'token' => $auth
+                        ]
+                        ]);
+                 }
+        } catch (\Throwable $e) {
            throw new HttpException(500, $e->getMessage());
         }
     }
@@ -78,9 +124,11 @@ class AuthController extends Controller
                 'status' => 500,
                 'message' => 'Logout gagal',
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw new HttpException(500, $e->getMessage());
         }
     }
     
 }
+
+

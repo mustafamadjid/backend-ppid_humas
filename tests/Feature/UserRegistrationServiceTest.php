@@ -26,17 +26,22 @@ class UserRegistrationServiceTest extends TestCase
     }
 
 
-    public function test_registerUserResponse(){
+    // Super admin account
+    // token : 25|efM5P68RBEMG7CaJPAH1swZuXgr5GME2bHVnqEBUb5fac790
+    // username : superadmin
+    // password : superadmin123
+
+    public function test_superadmin_registerUserResponse(){
         
 
         $data = [
-            'username' => 'lkh',
-            'email' => 'lkhs@example',
-            'password' => 'suanrman',
+            'username' => 'lojehong',
+            'email' => 'lojehong@example',
+            'password' => 'password123',
             'role' => 'admin'
         ];
 
-        $this->withHeader('Authorization', 'Bearer '. $this->userToken())->post('/ppid/user/register', $data)
+        $this->withHeader('Authorization', 'Bearer 25|efM5P68RBEMG7CaJPAH1swZuXgr5GME2bHVnqEBUb5fac790')->post('/ppid/user/register', $data)
             ->assertStatus(201)
             ->assertJson([
                 'status' => 201,
@@ -65,7 +70,7 @@ class UserRegistrationServiceTest extends TestCase
             'role' => 'admin'
         ];
 
-        $this->withHeader('Authorization', 'Bearer '. $this->userToken())->post('/ppid/user/register', $data)
+        $this->withHeader('Authorization', 'Bearer 25|efM5P68RBEMG7CaJPAH1swZuXgr5GME2bHVnqEBUb5fac790')->post('/ppid/user/register', $data)
             ->assertStatus(422)
             ->assertJson([
                 'status' => 422,

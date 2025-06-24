@@ -3,6 +3,7 @@ namespace App\Services\Implementation;
 
 use App\Models\User;
 use App\Services\UserDataServiceInterface;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 class UserDataServiceImpl implements UserDataServiceInterface
@@ -13,7 +14,7 @@ class UserDataServiceImpl implements UserDataServiceInterface
             Log::info("Data semua user berhasil diambil",["time" => now()]);
 
             return $user;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error("Data semua user gagal diambil",["time" => now()]);
             throw $e;
         }
@@ -21,12 +22,17 @@ class UserDataServiceImpl implements UserDataServiceInterface
 
     public function updateUserData(User $user, array $data){
         try {
-            $user->update($data);
+            $user->update([
+                'username' => $data['username'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+                'role' => $data['role']
+            ]);
             Log::info("Data user berhasil diupdate",["time" => now()]);
 
             return $user;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error("Data user gagal diupdate",["time" => now()]);
             throw $e;
         }
@@ -37,7 +43,7 @@ class UserDataServiceImpl implements UserDataServiceInterface
             $user->delete();
             Log::info("Data user berhasil dihapus",["time" => now()]);
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error("Data user gagal dihapus",["time" => now()]);
             throw $e;
         }

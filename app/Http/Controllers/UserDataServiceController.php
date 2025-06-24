@@ -29,7 +29,7 @@ class UserDataServiceController extends Controller
                 'message' => 'Data semua user berhasil diambil',
                 'data' => $data
             ], 200);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw new HttpException(500, $e->getMessage());
         }
     }
@@ -54,6 +54,13 @@ class UserDataServiceController extends Controller
                     'email',
                     'max:255',
                     Rule::unique('users', 'email')->ignore($id, 'id_user'),
+                ],
+                [
+                    'password' => [
+                        'sometimes',
+                        'string',
+                        'min:6',
+                    ]
                 ],
                 'role' => [
                     'sometimes',
@@ -81,7 +88,7 @@ class UserDataServiceController extends Controller
                 'status' => 404,
                 'message' => 'User tidak ditemukan'
             ], 404);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw new HttpException(500, $e->getMessage());
         }
     }
@@ -102,7 +109,7 @@ class UserDataServiceController extends Controller
                 'status' => 404,
                 'message' => 'User tidak ditemukan'
             ], 404);
-        } catch (\Exception $e) {
+        } catch (\Throwable$e) {
             throw new HttpException(500, $e->getMessage());
         }
     }

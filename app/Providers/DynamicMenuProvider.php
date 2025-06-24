@@ -18,7 +18,7 @@ class DynamicMenuProvider extends ServiceProvider implements DeferrableProvider
      */
     public function register(): void
     {
-        $this->app->singleton(DynamicMenuInterface::class,DynamicMenuImpl::class);
+        $this->app->bind(DynamicMenuInterface::class,DynamicMenuImpl::class);
     }
 
     /**

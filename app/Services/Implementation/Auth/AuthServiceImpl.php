@@ -24,7 +24,7 @@ class AuthServiceImpl implements AuthServiceInterface
             "time" => now()
         ]);
            return false;
-        } catch (\Exception $e) {
+        } catch (\Throwable$e) {
             Log::error('Percobaan login gagal (Masalah pada server)',["time" => now()]);
             throw $e;
         }
