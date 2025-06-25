@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\DokumenPublikController;
 use App\Http\Controllers\DynamicMenuController;
 use App\Http\Controllers\FormKeberatanController;
 use App\Http\Controllers\FormPengaduanController;
@@ -56,6 +57,14 @@ Route::prefix('/ppid')->middleware('auth:sanctum')->group(function () {
     // Form Permohonan Informasi
     Route::prefix('/permohonan-informasi')->controller(FormPermohonanInformasiController::class)->group(function () {
         Route::get('/', 'index');
+        Route::delete('/{id}', 'destroy');
+    });
+
+    // Dokumen publik
+    Route::prefix('/dokumen-publik')->controller(DokumenPublikController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::put('/{id}', 'update');
         Route::delete('/{id}', 'destroy');
     });
 });

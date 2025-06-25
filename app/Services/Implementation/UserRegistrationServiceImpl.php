@@ -26,14 +26,13 @@ class UserRegistrationServiceImpl implements UserRegistrationServiceInterface{
 
             return $user;
             
-        } catch (\Throwable $e) {
+        } catch (\Throwable $th) {
             Log::error("User baru gagal diregistrasikan",[
-                'username' => $data['username'],
-                'email' => $data['email'],
-                'role' => $data['role'],
-                "time" => now()
+                'error' => $th->getMessage(),
+                'trace' => $th->getTraceAsString(),
+                'time' => now(),
             ]);
-            throw $e;
+            throw $th;
         }
     }
 }

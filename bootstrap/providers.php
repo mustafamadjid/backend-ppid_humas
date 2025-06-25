@@ -3,6 +3,7 @@
 return [
     App\Providers\AppServiceProvider::class,
     App\Providers\AuthProvider\AuthServiceProvider::class,
+    App\Providers\DokumenPublikProvider::class,
     App\Providers\DynamicMenuProvider::class,
     App\Providers\FormKeberatanServiceProvider::class,
     App\Providers\FormPengaduanProvider::class,

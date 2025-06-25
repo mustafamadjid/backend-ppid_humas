@@ -23,7 +23,7 @@ class FormPengaduanController extends Controller
                 'nama_pelapor'=>[
                     'required',
                     'string',
-                    'max:300',
+                    'max:120',
                 ],
                 'no_ktp_pelapor'=>[
                     'required',
@@ -34,7 +34,7 @@ class FormPengaduanController extends Controller
                     'required',
                     'string',
                     'email',
-                    'max:255',
+                    'max:150',
                 ],
                 'no_telp_pelapor'=>[
                     'required',
@@ -44,12 +44,12 @@ class FormPengaduanController extends Controller
                 'nama_terlapor' => [
                     'required',
                     'string',
-                    'max:300',
+                    'max:120',
                 ],
                 'jabatan_terlapor' => [
                     'required',
                     'string',
-                    'max:300',
+                    'max:50',
                 ],
                 'deskripsi_penyalahgunaan' => [
                     'required',
@@ -58,7 +58,8 @@ class FormPengaduanController extends Controller
                 'file_bukti' => [
                     'required',
                     'file',
-                    'mimes:jpg,jpeg,png,pdf'
+                    'mimes:jpg,jpeg,png,pdf',
+                    'max:20480'
                 ]
             ]);
 

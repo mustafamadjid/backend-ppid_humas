@@ -14,9 +14,12 @@ class FormKeberatanServiceImpl implements FormKeberatanInterface
         try {
             Log::info('Data form keberatan berhasil diambil');
              return FormKeberatan::all();
-        } catch (\Throwable $e) {
-            Log::error('Data form keberatan gagal diambil');
-            throw $e;
+        } catch (\Throwable $th) {
+            Log::error("Gagal ambil data form keberatan", [
+                'error' => $th->getMessage(),
+                'trace' => $th->getTraceAsString(),
+            ]);
+            throw $th;
         }
     }
 
@@ -25,9 +28,12 @@ class FormKeberatanServiceImpl implements FormKeberatanInterface
         try {
             Log::info('Data form keberatan berhasil ditambahkan');
             return FormKeberatan::create($data);
-        } catch (\Throwable $e) {
-            Log::error('Data form keberatan gagal ditambahkan');
-            throw $e;
+        } catch (\Throwable $th) {
+            Log::error("Gagal menambahkan data form keberatan", [
+                'error' => $th->getMessage(),
+                'trace' => $th->getTraceAsString(),
+            ]);
+            throw $th;
         }
     }
 
@@ -40,9 +46,12 @@ class FormKeberatanServiceImpl implements FormKeberatanInterface
             $form->delete();
             Log::info('Data form keberatan berhasil dihapus');
             return true;
-        } catch (\Throwable $e) {
-            Log::error('Data form keberatan gagal dihapus');
-            throw $e;
+        } catch (\Throwable $th) {
+            Log::error("Gagal menghapus data form keberatan", [
+                'error' => $th->getMessage(),
+                'trace' => $th->getTraceAsString(),
+            ]);
+            throw $th;
         }
     }
 }

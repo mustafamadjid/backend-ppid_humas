@@ -14,9 +14,13 @@ class UserDataServiceImpl implements UserDataServiceInterface
             Log::info("Data semua user berhasil diambil",["time" => now()]);
 
             return $user;
-        } catch (\Throwable $e) {
-            Log::error("Data semua user gagal diambil",["time" => now()]);
-            throw $e;
+        } catch (\Throwable $th) {
+            Log::error("Data semua user gagal diambil", [
+                'error' => $th->getMessage(),
+                'trace' => $th->getTraceAsString(),
+                'time' => now(),
+            ]);
+            throw $th;
         }
     }
 
@@ -27,9 +31,13 @@ class UserDataServiceImpl implements UserDataServiceInterface
 
             return $user;
 
-        } catch (\Throwable $e) {
-            Log::error("Data user gagal diupdate",["time" => now()]);
-            throw $e;
+        } catch (\Throwable $th) {
+            Log::error("Data user gagal diupdate", [
+                'error' => $th->getMessage(),
+                'trace' => $th->getTraceAsString(),
+                'time' => now(),
+            ]);
+            throw $th;
         }
     }
 
@@ -38,9 +46,13 @@ class UserDataServiceImpl implements UserDataServiceInterface
             $user->delete();
             Log::info("Data user berhasil dihapus",["time" => now()]);
             return true;
-        } catch (\Throwable $e) {
-            Log::error("Data user gagal dihapus",["time" => now()]);
-            throw $e;
+        } catch (\Throwable $th) {
+            Log::error("Data user gagal dihapus", [
+                'error' => $th->getMessage(),
+                'trace' => $th->getTraceAsString(),
+                'time' => now(),
+            ]);
+            throw $th;
         }
     }
 }

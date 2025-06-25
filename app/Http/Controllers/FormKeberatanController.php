@@ -37,7 +37,7 @@ class FormKeberatanController extends Controller
                 'nama_pemohon'=>[
                     'required',
                     'string',
-                    'max:300',
+                    'max:120',
                 ],
                 'no_ktp_pemohon'=>[
                     'required',
@@ -48,7 +48,7 @@ class FormKeberatanController extends Controller
                     'required',
                     'string',
                     'email',
-                    'max:255',
+                    'max:150',
                 ],
                 'alamat_pemohon' =>[
                     'required',
@@ -62,22 +62,21 @@ class FormKeberatanController extends Controller
                 'pekerjaan_pemohon' => [
                     'required',
                     'string',
-                    'max:300',
+                    'max:100',
                 ],
                 'tujuan_pengajuan' => [
                     'required',
                     'string',
-                    'max:300',
                 ],
                 'alasan_pengajuan' => [
                     'required',
                     'string',
-                    'max:300',
                 ],
                 'file_bukti' => [
                     'required',
                     'file',
-                    'mimes:jpg,jpeg,png,pdf'
+                    'mimes:jpg,jpeg,png,pdf',
+                    'max:20480'
                 ]
             ]);
 

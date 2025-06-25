@@ -15,9 +15,12 @@ class FormPengaduanImpl implements FormPengaduanInterface
 
             Log::info("Data pengaduan berhasil ditambahkan",["time" => now()]);
             return FormPengaduan::create($data);
-        } catch (\Throwable $e) {
-            Log::error("Data pengaduan gagal ditambahkan",["time" => now()]);
-            throw $e;
+        } catch (\Throwable $th) {
+           Log::error("Gagal menambahkan data pengaduan", [
+                'error' => $th->getMessage(),
+                'trace' => $th->getTraceAsString(),
+            ]);
+            throw $th;
             
         }
     }
@@ -28,9 +31,12 @@ class FormPengaduanImpl implements FormPengaduanInterface
             $pengaduan = FormPengaduan::all();
             Log::info("Data pengaduan berhasil diambil",["time" => now()]);
             return $pengaduan;
-        } catch (\Throwable $e) {
-            Log::error("Data pengaduan gagal diambil",["time" => now()]);
-            throw $e;
+        } catch (\Throwable $th) {
+            Log::error("Gagal ambil data pengaduan", [
+                'error' => $th->getMessage(),
+                'trace' => $th->getTraceAsString(),
+            ]);
+            throw $th;
         }
     }
 
@@ -44,9 +50,12 @@ class FormPengaduanImpl implements FormPengaduanInterface
             $pengaduan->delete();
             Log::info("Data pengaduan berhasil dihapus",["time" => now()]);
             return true;
-        } catch (\Throwable $e) {
-            Log::error("Data pengaduan gagal dihapus",["time" => now()]);
-            throw $e;
+        } catch (\Throwable $th) {
+            Log::error("Gagal menghapus data pengaduan", [
+                'error' => $th->getMessage(),
+                'trace' => $th->getTraceAsString(),
+            ]);
+            throw $th;
         }
     }
 }
