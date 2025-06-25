@@ -22,12 +22,7 @@ class UserDataServiceImpl implements UserDataServiceInterface
 
     public function updateUserData(User $user, array $data){
         try {
-            $user->update([
-                'username' => $data['username'],
-                'email' => $data['email'],
-                'password' => Hash::make($data['password']),
-                'role' => $data['role']
-            ]);
+            $user->update($data);
             Log::info("Data user berhasil diupdate",["time" => now()]);
 
             return $user;

@@ -55,13 +55,13 @@ class UserDataServiceController extends Controller
                     'max:255',
                     Rule::unique('users', 'email')->ignore($id, 'id_user'),
                 ],
-                [
-                    'password' => [
-                        'sometimes',
-                        'string',
-                        'min:6',
-                    ]
+                
+                'password' => [
+                    'sometimes',
+                    'string',
+                    'min:6',
                 ],
+                
                 'role' => [
                     'sometimes',
                     'string',
