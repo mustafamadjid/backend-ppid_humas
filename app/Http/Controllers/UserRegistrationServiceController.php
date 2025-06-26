@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\userDataRequest\createUserRequest;
 use App\Services\UserRegistrationServiceInterface;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\JsonResponse;
@@ -22,46 +23,10 @@ class UserRegistrationServiceController extends Controller
     }
 
     // Register Action
-    public function store (Request $request):JsonResponse
+    public function store (createUserRequest $request):JsonResponse
     {
        try {
-        $validated = Validator::make($request->all(), [
-            'username' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('users', 'username'),
-            ],
-
-            'password' => [
-                'required',
-                'string', 
-                'min:6'],
-
-            'email' => [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                Rule::unique('users', 'email'),
-            ],
-            'role' => [
-                'required',
-                'string',
-                'max:255',
-            ]
-        ]);
-       
-
-        if ($validated->fails()) {
-            return response()->json([
-                'status' => 422,
-                'message' => 'User baru gagal diregistrasikan',
-                'errors' => $validated->errors()
-            ]);
-        }
-
-        $user = $this->userRegistrationService->registerUser($validated->validated());
+        $user = $this->userRegistrationService->registerUser($request->validated());
 
         return response()->json([
             'status' => 201,

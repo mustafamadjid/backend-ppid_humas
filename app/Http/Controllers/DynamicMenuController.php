@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\menuDataRequest\createMenuRequest;
+use App\Http\Requests\menuDataRequest\updateMenuRequest;
 use App\Models\DynamicMenu;
 use App\Services\DynamicMenuInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -17,30 +19,11 @@ class DynamicMenuController extends Controller
     {
         $this->dynamicMenuService = $dynamicMenuService;
     }   
-    public function store(Request $request) {
+    public function store(createMenuRequest $request) {
         try {
-            $validated = Validator::make($request->all(), [
-                'judul_menu' => [
-                    'required',
-                    'string',
-                    'max:150',
-                ],
-                'url' => [
-                    'required',
-                    'string',
-                    'url'
-                ]
-            ]);
+          
 
-            if($validated->fails()){
-                return response()->json([
-                    'status' => 422,
-                    'message' => 'Data menu gagal ditambahkan',
-                    'errors' => $validated->errors()
-                ], 422);
-            }
-
-            $data = $this->dynamicMenuService->createDynamicMenu($request->all());
+            $data = $this->dynamicMenuService->createDynamicMenu($request->validated());
 
             return response()->json([
                 'status' => 200,
@@ -68,32 +51,10 @@ class DynamicMenuController extends Controller
         }
     }
 
-    public function update(Request $request,$id){
+    public function update(updateMenuRequest $request,$id){
         try {
             $menu = DynamicMenu::findOrFail($id);
-
-            $validated = Validator::make($request->all(), [
-                'judul_menu' => [
-                    'sometimes',
-                    'string',
-                    'max:150',
-                ],
-                'url' => [
-                    'sometimes',
-                    'string',
-                    'url'
-                ]
-            ]);
-
-            if($validated->fails()){
-                return response()->json([
-                    'status' => 422,
-                    'message' => 'Data menu gagal diupdate',
-                    'errors' => $validated->errors()
-                ], 422);
-            };
-
-            $data = $this->dynamicMenuService->updateDynamicMenu($menu, $validated->validated());
+            $data = $this->dynamicMenuService->updateDynamicMenu($menu, $request->validated());
 
             return response()->json([
                 'status' => 200,

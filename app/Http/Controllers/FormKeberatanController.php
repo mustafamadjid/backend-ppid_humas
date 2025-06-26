@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\formKeberatanRequest\createFormKeberatanRequest;
+use App\Http\Requests\formKeberatanRequest\createFormRequest;
 use App\Models\FormKeberatan;
 use App\Services\FormKeberatanInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -31,69 +33,14 @@ class FormKeberatanController extends Controller
         }
     }
 
-    public function store(Request $request){
+    public function store(createFormKeberatanRequest $request){
         try {
-            $validated = Validator::make($request->all(), [
-                'nama_pemohon'=>[
-                    'required',
-                    'string',
-                    'max:120',
-                ],
-                'no_ktp_pemohon'=>[
-                    'required',
-                    'string',
-                    'max:16',
-                ],
-                'email_pemohon'=>[
-                    'required',
-                    'string',
-                    'email',
-                    'max:150',
-                ],
-                'alamat_pemohon' =>[
-                    'required',
-                    'string',
-                ],
-                'no_telp_pemohon'=>[
-                    'required',
-                    'string',
-                    'max:13',
-                ],
-                'pekerjaan_pemohon' => [
-                    'required',
-                    'string',
-                    'max:100',
-                ],
-                'tujuan_pengajuan' => [
-                    'required',
-                    'string',
-                ],
-                'alasan_pengajuan' => [
-                    'required',
-                    'string',
-                ],
-                'file_bukti' => [
-                    'required',
-                    'file',
-                    'mimes:jpg,jpeg,png,pdf',
-                    'max:20480'
-                ]
-            ]);
-
-            if($validated->fails()){
-                return response()->json([
-                    'status' => 422,
-                    'message' => 'Data pengaduan gagal ditambahkan',
-                    'errors' => $validated->errors()
-                ]);
-            }
-
             $file = $request->file('file_bukti');
             $uniqueName = uniqid() . '_' . $file->getClientOriginalName();
             $path = $file->storePubliclyAs('bukti_pengajuan_keberatan', $uniqueName, 'public');
 
             $data = array_merge(
-                $validated->validated(),
+                $request->validated(),
                 ['path_file_bukti' => $path]
             );
 

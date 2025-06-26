@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\dokumenDataRequest\createDokumenRequest;
+use App\Http\Requests\dokumenDataRequest\updateDokumenRequest;
 use App\Models\DokumenPublik;
 use App\Services\DokumenPublikInterface;
 use Illuminate\Database\Eloquent\Model;
@@ -30,47 +32,18 @@ class DokumenPublikController extends Controller
             throw new HttpException(500, $th->getMessage());
         }
     }
-    public function store(Request $request){
+    public function store(createDokumenRequest $request){
         try {
-            $validated = Validator::make($request->all(), [
-                'nama_dokumen' => [
-                    'required',
-                    'string',
-                    'max:100'
-                ],
-                'kategori_dokumen' => [
-                    'required',
-                    'string',
-                    'max:100'   
-                ],
-                'tahun_dokumen' => [
-                    'required',
-                    'integer',
-                    "min:1900",
-                    "max:2100"
-                    
-                ],
-                'file_dokumen' => [
-                    'required',
-                    'file',
-                    'mimes:jpeg,pdf',
-                    'max:20480'
-                ]
-            ]);
+          
 
-            if($validated->fails()){
-                return response()->json([
-                    'status' => 422,
-                    'message' => 'Dokumen publik gagal ditambahkan',
-                    'errors' => $validated->errors()
-                ], 422);
-            }
+            
+            
             $file = $request->file('file_dokumen');
             $uniqueName = uniqid() . '_' . $file->getClientOriginalName();
             $path = $file->storePubliclyAs('dokumen', $uniqueName, 'public');
 
             $data = array_merge(
-                $validated->validated(),
+                $request->validated(),
                 ['path_dokumen' => $path]
             );
 
@@ -84,43 +57,22 @@ class DokumenPublikController extends Controller
             throw new HttpException(500, $th->getMessage());
         }
     }
-    public function update(Request $request, $id){
+    public function update(updateDokumenRequest $request, $id){
         try {
             $dokumen = DokumenPublik::findOrFail($id);
 
-            $validated = Validator::make($request->all(), [
-                'nama_dokumen' => [
-                    'sometimes',
-                    'string',
-                    'max:100'
-                ],
-                'path_dokumen' => [
-                    'sometimes',
-                    'string',
-                    'url'
-                ],
-                'kategori_dokumen' => [
-                    'sometimes',
-                    'string',
-                    'max:100'   
-                ],
-                'tahun_dokumen' => [
-                    'sometimes',
-                    'integer',
-                    "min:1900",
-                    "max:2100"
-                ]
-                ]);
+           
 
-            if($validated->fails()){
-                return response()->json([
-                    'status' => 422,
-                    'message' => 'Dokumen publik gagal diupdate',
-                    'errors' => $validated->errors()
-                ], 422);
-            }
+            $file = $request->file('file_dokumen');
+            $uniqueName = uniqid() . '_' . $file->getClientOriginalName();
+            $path = $file->storePubliclyAs('dokumen', $uniqueName, 'public');
 
-            $data = $this->dokumen->updateDokumenPublik($dokumen,$validated->validated());
+            $data = array_merge(
+                $request->validated(),
+                ['path_dokumen' => $path]
+            );
+
+            $data = $this->dokumen->updateDokumenPublik($dokumen,$data);
             return response()->json([
                 'status' => 200,
                 'message' => 'Dokumen publik berhasil diupdate',

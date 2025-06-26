@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\userDataRequest\UpdateUserRequest;
 use App\Models\User;
 use App\Services\UserDataServiceInterface;
 use Illuminate\Http\Request;
@@ -34,49 +35,11 @@ class UserDataServiceController extends Controller
         }
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateUserRequest $request, $id)
     {
-        
-    
         try {
             $user = User::findOrFail($id);
-
-            $validated = Validator::make($request->all(), [
-                'username' => [
-                    'sometimes',
-                    'string',
-                    'max:255',
-                    Rule::unique('users', 'username')->ignore($id, 'id_user'),
-                ],
-                'email' => [
-                    'sometimes',
-                    'string',
-                    'email',
-                    'max:255',
-                    Rule::unique('users', 'email')->ignore($id, 'id_user'),
-                ],
-                
-                'password' => [
-                    'sometimes',
-                    'string',
-                    'min:6',
-                ],
-                
-                'role' => [
-                    'sometimes',
-                    'string',
-                    'max:255',
-                ],
-            ]);
-        
-            if ($validated->fails()) {
-                return response()->json([
-                    'status' => 422,
-                    'message' => 'Data user gagal diupdate',
-                    'errors' => $validated->errors()
-                ], 422);
-            }
-            $data = $this->userDataService->updateUserData($user, $validated->validated());
+            $data = $this->userDataService->updateUserData($user, $request->validated( ));
     
             return response()->json([
                 'status' => 200,

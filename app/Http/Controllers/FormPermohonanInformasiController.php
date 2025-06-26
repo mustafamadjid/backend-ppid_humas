@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\formPermohonanRequest\createFormPermohonanRequest;
 use App\Models\FormPermohonanInformasi;
 use App\Services\FormPermohonanInformasiInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -29,105 +30,10 @@ class FormPermohonanInformasiController extends Controller
         }
     }
 
-    public function store(Request $request)
+    public function store(createFormPermohonanRequest $request)
     {
         try {
-            $validated = Validator::make($request->all(), [
-                'nama_pemohon' => [
-                    'required',
-                    'string',
-                    'max:300',
-                ],
-                'no_ktp_pemohon' => [
-                    'required',
-                    'string',
-                    'max:16',
-                ],
-                'alamat_pemohon' => [
-                    'required',
-                    'string',
-                    
-                ],
-                'no_telp_pemohon' => [
-                    'required',
-                    'string',
-                    'max:15',
-                ],
-                'email_pemohon' => [
-                    'required',
-                    'string',
-                    'email',
-                    
-                ],
-                'kebutuhan_informasi_pemohon' => [
-                    'required',
-                    'string',
-                    
-                ],
-                'alasan_permintaan' => [
-                    'required',
-                    'string',
-                    
-                ],
-                'nama_pengguna' => [
-                    'required',
-                    'string',
-                    'max:300',
-                ],
-                'no_ktp_pengguna' => [
-                    'required',
-                    'string',
-                    'max:16',
-                ],
-                'alamat_pengguna' => [
-                    'required',
-                    'string',
-                    
-                ],
-                'no_telp_pengguna' => [
-                    'required',
-                    'string',
-                    'max:15',
-                ],
-                'email_pengguna' => [
-                    'required',
-                    'string',
-                    'email',
-                    
-                ],
-                'kebutuhan_informasi_pengguna' => [
-                    'required',
-                    'string',
-                    
-                ],
-                'alasan_penggunaan' => [
-                    'required',
-                    'string',
-                ],
-                'cara_perolehan_informasi' => [
-                    'required',
-                    'string',
-                ],
-                'format_informasi' => [
-                    'required',
-                    'string',
-                ],
-                'cara_pengiriman_informasi' => [
-                    'required',
-                    'string',
-                ],
-            ]);
-
-            if($validated->fails()){
-                return response()->json([
-                    'status' => 400,
-                    'message' => 'Data form permohonan informasi gagal disimpan',
-                    'errors' => $validated->errors()
-                ],400);
-            }
-
-            $data = $this->form->createFormPermohonanInformasi($validated->validated());
-
+            $data = $this->form->createFormPermohonanInformasi($request->validated());
             return response()->json([
                 'status' => 200,
                 'message' => 'Data form permohonan informasi berhasil disimpan',
