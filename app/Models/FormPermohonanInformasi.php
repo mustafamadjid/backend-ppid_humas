@@ -27,4 +27,6 @@ class FormPermohonanInformasi extends Model
         'format_informasi',
         'cara_pengiriman_informasi',
     ];
+
+    public $timestamps = true;
 }

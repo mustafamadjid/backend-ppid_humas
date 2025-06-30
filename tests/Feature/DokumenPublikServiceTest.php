@@ -26,6 +26,15 @@ class DokumenPublikServiceTest extends TestCase
         return $token;
     }
 
+    public function test_success_getDokumenPublik() {
+        $this->withHeader('Authorization', 'Bearer '.$this->userToken())->get('ppid/dokumen-publik')
+        ->assertStatus(200)
+        ->assertJsonStructure([
+            'status',
+            'message',
+            'data'
+        ]);
+    }
     public function test_success_createDokumenPublik(){
         $data = 
         [

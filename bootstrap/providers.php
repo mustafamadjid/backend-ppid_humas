@@ -9,6 +9,7 @@ return [
     App\Providers\FormPengaduanProvider::class,
     App\Providers\FormPengaduanProviderr::class,
     App\Providers\FormPermohonanInformasiProvider::class,
+    App\Providers\MaklumatPelayananProvider::class,
     App\Providers\UserDataServiceProvider::class,
     App\Providers\UserRegistrationServiceProvider::class,
 ];

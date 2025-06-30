@@ -6,6 +6,7 @@ use App\Http\Controllers\DynamicMenuController;
 use App\Http\Controllers\FormKeberatanController;
 use App\Http\Controllers\FormPengaduanController;
 use App\Http\Controllers\FormPermohonanInformasiController;
+use App\Http\Controllers\MaklumatPelayananController;
 use App\Http\Controllers\UserDataServiceController;
 use App\Http\Controllers\UserRegistrationServiceController;
 use App\Models\FormPengaduan;
@@ -62,6 +63,14 @@ Route::prefix('/ppid')->middleware('auth:sanctum')->group(function () {
 
     // Dokumen publik
     Route::prefix('/dokumen-publik')->controller(DokumenPublikController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::put('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
+    });
+
+    // Maklumat Pelayanan
+    Route::prefix('/maklumat-pelayanan')->controller(MaklumatPelayananController::class)->group(function(){
         Route::get('/', 'index');
         Route::post('/', 'store');
         Route::put('/{id}', 'update');
