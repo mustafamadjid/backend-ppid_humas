@@ -36,21 +36,23 @@ class FormKeberatanServiceTest extends TestCase
     }
 
    public function test_success_createForm(){
-    // Fake the storage
-    Storage::fake('public');
 
     // Fake data
     $data = [
         'nama_pemohon' => 'Budi Santoso',
         'no_ktp_pemohon' => '3276012301123456',
         'email_pemohon' => 'budi@mail.com',
+        'alamat_pemohon' => 'Jl. Merdeka No. 10, Jakarta',
         'no_telp_pemohon' => '081234567890',
         'pekerjaan_pemohon' => 'Guru',
         'tujuan_pengajuan' => 'Permohonan Data',
         'alasan_pengajuan' => 'Keperluan penelitian',
-        'file_bukti' => UploadedFile::fake()->create('file_bukti.pdf', 200, 'application/pdf'),
+        'file_bukti' => UploadedFile::fake()->create('file_bukti.pdf',1024),
     ];
-    $this->withHeader('Authorization', 'Bearer '.$this->userToken())->post('/formulir/keberatan', $data)
+    $this->withHeaders([
+        'Authorization' => 'Bearer '.$this->userToken(),
+        'Accept' => 'application/json'
+    ])->post('/formulir/keberatan', $data)
     ->assertStatus(200)
     ->assertJsonStructure([
         'status',

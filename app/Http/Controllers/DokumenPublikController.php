@@ -34,10 +34,6 @@ class DokumenPublikController extends Controller
     }
     public function store(createDokumenRequest $request){
         try {
-          
-
-            
-            
             $file = $request->file('file_dokumen');
             $uniqueName = uniqid() . '_' . $file->getClientOriginalName();
             $path = $file->storePubliclyAs('dokumen', $uniqueName, 'public');
@@ -60,9 +56,7 @@ class DokumenPublikController extends Controller
     public function update(updateDokumenRequest $request, $id){
         try {
             $dokumen = DokumenPublik::findOrFail($id);
-
-           
-
+            
             $file = $request->file('file_dokumen');
             $uniqueName = uniqid() . '_' . $file->getClientOriginalName();
             $path = $file->storePubliclyAs('dokumen', $uniqueName, 'public');
