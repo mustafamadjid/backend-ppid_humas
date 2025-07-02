@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\MaklumatPelayananRequest\createRequest;
 use App\Http\Requests\MaklumatPelayananRequest\updateRequest;
 use App\Models\MaklumatPelayanan;
+use App\Services\DataServiceInterface;
 use App\Services\MaklumatPelayananServiceInterfce;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -12,8 +13,8 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class MaklumatPelayananController extends Controller
 {
-    private MaklumatPelayananServiceInterfce $maklumatPelayanan;
-    public function __construct(MaklumatPelayananServiceInterfce $maklumatPelayanan)
+    private DataServiceInterface $maklumatPelayanan;
+    public function __construct(DataServiceInterface $maklumatPelayanan)
     {
         $this->maklumatPelayanan = $maklumatPelayanan;
     }
@@ -21,7 +22,7 @@ class MaklumatPelayananController extends Controller
     public function index()
     {
         try {
-            $data = $this->maklumatPelayanan->getMaklumatPelayanan();
+            $data = $this->maklumatPelayanan->getData();
 
             return response()->json([
                 'status' => 200,
@@ -35,7 +36,7 @@ class MaklumatPelayananController extends Controller
     public function store(createRequest $request)
     {
         try {
-            $data = $this->maklumatPelayanan->createMaklumatPelayanan($request->validated());
+            $data = $this->maklumatPelayanan->createData($request->validated());
             return response()->json([
                 'status' => 201,
                 'message' => 'Data maklumat pelayanan berhasil dibuat',
@@ -49,7 +50,7 @@ class MaklumatPelayananController extends Controller
     {
         try {
             $maklumat = MaklumatPelayanan::findOrFail($id);
-            $data = $this->maklumatPelayanan->updateMaklumatPelayanan($maklumat,$request->validated());
+            $data = $this->maklumatPelayanan->updateData($maklumat,$request->validated());
 
             return response()->json([
                 'status' => 200,
@@ -60,7 +61,7 @@ class MaklumatPelayananController extends Controller
             return response()->json([
                 'status' => 404,
                 'message' => 'Data maklumat pelayanan tidak ditemukan'
-            ],400);
+            ],404);
         }
         catch (\Throwable $e) {
             throw new HttpException(500,$e->getMessage());
@@ -70,7 +71,7 @@ class MaklumatPelayananController extends Controller
     {
         try {
             $maklumat = MaklumatPelayanan::findOrFail($id);
-            $data = $this->maklumatPelayanan->deleteMaklumatPelayanan($maklumat);
+            $data = $this->maklumatPelayanan->deleteData($maklumat);
 
             return response()->json([
                 'status' => 200,

@@ -5,23 +5,20 @@ namespace App\Http\Controllers;
 use App\Http\Requests\dokumenDataRequest\createDokumenRequest;
 use App\Http\Requests\dokumenDataRequest\updateDokumenRequest;
 use App\Models\DokumenPublik;
-use App\Services\DokumenPublikInterface;
-use Illuminate\Database\Eloquent\Model;
+use App\Services\DataServiceInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class DokumenPublikController extends Controller
 {
-    private DokumenPublikInterface $dokumen;
-    public function __construct (DokumenPublikInterface $dokumen){
+    private DataServiceInterface $dokumen;
+    public function __construct (DataServiceInterface $dokumen){
         $this->dokumen = $dokumen;
     }
 
     public function index(){
         try {
-            $data = $this->dokumen->getDokumenPublik();
+            $data = $this->dokumen->getData();
 
             return response()->json([
                 'status' => 200,
@@ -43,11 +40,11 @@ class DokumenPublikController extends Controller
                 ['path_dokumen' => $path]
             );
 
-            $data = $this->dokumen->createDokumenPublik($data);
+            $result = $this->dokumen->createData($data);
             return response()->json([
                 'status' => 200,
                 'message' => 'Dokumen publik berhasil ditambahkan',
-                'data' => $data
+                'data' => $result
             ], 200);
         } catch (\Throwable $th) {
             throw new HttpException(500, $th->getMessage());
@@ -66,7 +63,7 @@ class DokumenPublikController extends Controller
                 ['path_dokumen' => $path]
             );
 
-            $data = $this->dokumen->updateDokumenPublik($dokumen,$data);
+            $data = $this->dokumen->updateData($dokumen,$data);
             return response()->json([
                 'status' => 200,
                 'message' => 'Dokumen publik berhasil diupdate',
@@ -85,7 +82,7 @@ class DokumenPublikController extends Controller
     public function destroy($id){
         try {
             $dokumen = DokumenPublik::findOrFail($id);
-            $this->dokumen->deleteDokumenPublik($dokumen);
+            $this->dokumen->deleteData($dokumen);
             return response()->json([
                 'status' => 200,
                 'message' => 'Dokumen publik berhasil dihapus'

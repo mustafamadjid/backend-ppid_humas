@@ -2,12 +2,13 @@
 namespace App\Services\Implementation;
 
 use App\Models\FormPermohonanInformasi;
-use App\Services\FormPermohonanInformasiInterface;
+use App\Services\FormServiceInterface;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
-class FormPermohonanInformasiImpl implements FormPermohonanInformasiInterface
+class FormPermohonanInformasiImpl implements FormServiceInterface
 {
-    public function getAllFormPermohonanInformasi(){
+    public function getForm(){
         try {
             Log::info("Data form permohonan informasi berhasil diambil");
             return FormPermohonanInformasi::all();
@@ -20,7 +21,7 @@ class FormPermohonanInformasiImpl implements FormPermohonanInformasiInterface
         }
     }
 
-    public function createFormPermohonanInformasi(array $data){
+    public function createForm(array $data){
         try {
             $data = FormPermohonanInformasi::create($data);
             Log::info("Data form permohonan informasi berhasil ditambahkan");
@@ -34,7 +35,7 @@ class FormPermohonanInformasiImpl implements FormPermohonanInformasiInterface
         }
     }
 
-    public function deleteFormPermohonanInformasi(FormPermohonanInformasi $form){
+    public function deleteForm(Model $form){
         try {
             $form->delete();
             Log::info("Data form permohonan informasi berhasil dihapus");

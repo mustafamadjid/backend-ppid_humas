@@ -2,13 +2,14 @@
 namespace App\Services\Implementation;
 
 use App\Models\FormPengaduan;
-use App\Services\FormPengaduanInterface;
+use App\Services\FormServiceInterface;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
-class FormPengaduanImpl implements FormPengaduanInterface
+class FormPengaduanImpl implements FormServiceInterface
 {
-    public function createFormPengaduan(array $data)
+    public function createForm(array $data)
     {
         try {
            
@@ -25,7 +26,7 @@ class FormPengaduanImpl implements FormPengaduanInterface
         }
     }
 
-    public function getFormPengaduan()
+    public function getForm()
     {
         try {
             $pengaduan = FormPengaduan::all();
@@ -40,14 +41,14 @@ class FormPengaduanImpl implements FormPengaduanInterface
         }
     }
 
-    public function deleteFormPengaduan(FormPengaduan $pengaduan)
+    public function deleteForm(Model $form)
     {
         try {
-            if($pengaduan->path_file_bukti && Storage::disk('public')->exists($pengaduan->path_file_bukti)){
-                Storage::disk('public')->delete($pengaduan->path_file_bukti);
+            if($form->path_file_bukti && Storage::disk('public')->exists($form->path_file_bukti)){
+                Storage::disk('public')->delete($form->path_file_bukti);
             }
 
-            $pengaduan->delete();
+            $form->delete();
             Log::info("Data pengaduan berhasil dihapus",["time" => now()]);
             return true;
         } catch (\Throwable $th) {

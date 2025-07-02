@@ -2,12 +2,13 @@
 namespace App\Services\Implementation;
 
 use App\Models\DokumenPublik;
-use App\Services\DokumenPublikInterface;
+use App\Services\DataServiceInterface;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
-class DokumenPublikImpl implements DokumenPublikInterface
+class DokumenPublikImpl implements DataServiceInterface
 {
-    public function getDokumenPublik(){
+    public function getData(){
         try {
             Log::info("Semua dokumen publik berhasil diambil");
             return DokumenPublik::all();
@@ -20,7 +21,7 @@ class DokumenPublikImpl implements DokumenPublikInterface
         }
     }
 
-    public function createDokumenPublik(array $data){
+    public function createData(array $data){
         try {
             Log::info("Dokumen publik berhasil ditambahkan");
             return DokumenPublik::create($data);
@@ -33,7 +34,7 @@ class DokumenPublikImpl implements DokumenPublikInterface
         }
     }
 
-    public function updateDokumenPublik(DokumenPublik $dokumen, array $data){
+    public function updateData(Model $dokumen, array $data){
             try {
                 Log::info("Dokumen publik berhasil diupdate");
                 return $dokumen->update($data);
@@ -46,7 +47,7 @@ class DokumenPublikImpl implements DokumenPublikInterface
             }
     }
 
-    public function deleteDokumenPublik(DokumenPublik $dokumen){
+    public function deleteData(Model $dokumen){
         try {
             Log::info("Dokumen publik berhasil dihapus");
             return $dokumen->delete();

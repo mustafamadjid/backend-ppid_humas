@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\formPermohonanRequest\createFormPermohonanRequest;
 use App\Models\FormPermohonanInformasi;
 use App\Services\FormPermohonanInformasiInterface;
+use App\Services\FormServiceInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -12,14 +13,16 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class FormPermohonanInformasiController extends Controller
 {
-    private FormPermohonanInformasiInterface $form;
-    public function __construct(FormPermohonanInformasiInterface $form) {
+    private FormServiceInterface $form;
+
+    public function __construct(FormServiceInterface $form)
+    {
         $this->form = $form;
     }
     public function index()
     {
         try {
-            $data = $this->form->getAllFormPermohonanInformasi();
+            $data = $this->form->getForm();
             return response()->json([
                 'status' => 200,
                 'message' => 'Data semua form permohonan informasi berhasil diambil',
@@ -33,7 +36,7 @@ class FormPermohonanInformasiController extends Controller
     public function store(createFormPermohonanRequest $request)
     {
         try {
-            $data = $this->form->createFormPermohonanInformasi($request->validated());
+            $data = $this->form->createForm($request->validated());
             return response()->json([
                 'status' => 200,
                 'message' => 'Data form permohonan informasi berhasil disimpan',
@@ -48,8 +51,8 @@ class FormPermohonanInformasiController extends Controller
     public function destroy(string $id)
     {
         try {
-            $formData = FormPermohonanInformasi::findOrFail($id);
-            $this->form->deleteFormPermohonanInformasi($formData);
+            $formResult = FormPermohonanInformasi::findOrFail($id);
+            $this->form->deleteForm($formResult);
 
             return response()->json([
                 'status' => 200,

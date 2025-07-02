@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\BannerBerandaController;
 use App\Http\Controllers\DokumenPublikController;
 use App\Http\Controllers\DynamicMenuController;
 use App\Http\Controllers\FormKeberatanController;
@@ -71,6 +72,14 @@ Route::prefix('/ppid')->middleware('auth:sanctum')->group(function () {
 
     // Maklumat Pelayanan
     Route::prefix('/maklumat-pelayanan')->controller(MaklumatPelayananController::class)->group(function(){
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::put('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
+    });
+
+    // Banner Beranda
+    Route::prefix('/banner-beranda')->controller(BannerBerandaController::class)->group(function(){
         Route::get('/', 'index');
         Route::post('/', 'store');
         Route::put('/{id}', 'update');

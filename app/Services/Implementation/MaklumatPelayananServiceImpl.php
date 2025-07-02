@@ -2,12 +2,13 @@
 namespace App\Services\Implementation;
 
 use App\Models\MaklumatPelayanan;
-use App\Services\MaklumatPelayananServiceInterfce;
+use App\Services\DataServiceInterface;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
-class MaklumatPelayananServiceImpl implements MaklumatPelayananServiceInterfce
+class MaklumatPelayananServiceImpl implements DataServiceInterface
 {
-    public function getMaklumatPelayanan()
+    public function getData()
     {
         try {
             $data = MaklumatPelayanan::all();
@@ -24,11 +25,12 @@ class MaklumatPelayananServiceImpl implements MaklumatPelayananServiceInterfce
             throw $th;
         }
     }
-    public function createMaklumatPelayanan(array $data)
+    public function createData(array $data)
     {
         try{
+            $result = MaklumatPelayanan::create($data);
             Log::info("Data maklumat pelayanan berhasil ditambahkan");
-            return MaklumatPelayanan::create($data);
+            return $result;
         }catch (\Throwable $th){
             Log::error("Gagal menambahkan data maklumat pelayanan", [
                 'error' => $th->getMessage(),
@@ -37,7 +39,7 @@ class MaklumatPelayananServiceImpl implements MaklumatPelayananServiceInterfce
             throw $th;
         }
     }
-    public function updateMaklumatPelayanan(MaklumatPelayanan $maklumat,array $data)
+    public function updateData(Model $maklumat,array $data)
     {
         try {
             $result = $maklumat->update($data);
@@ -56,7 +58,7 @@ class MaklumatPelayananServiceImpl implements MaklumatPelayananServiceInterfce
             throw $th;
         }
     }
-    public function deleteMaklumatPelayanan(MaklumatPelayanan $maklumat){
+    public function deleteData(Model $maklumat){
         try {
             $result = $maklumat->delete();
             if ($result) {

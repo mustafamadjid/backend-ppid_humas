@@ -3,13 +3,15 @@ namespace App\Services\Implementation;
 
 use App\Models\FormKeberatan;
 
-use App\Services\FormKeberatanInterface;
+
+use App\Services\FormServiceInterface;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
-class FormKeberatanServiceImpl implements FormKeberatanInterface
+class FormKeberatanServiceImpl implements FormServiceInterface
 {
-    public function getAllFormKeberatan()
+    public function getForm()
     {
         try {
             Log::info('Data form keberatan berhasil diambil');
@@ -23,7 +25,7 @@ class FormKeberatanServiceImpl implements FormKeberatanInterface
         }
     }
 
-    public function createFormKeberatan(array $data)
+    public function createForm(array $data)
     {
         try {
             Log::info('Data form keberatan berhasil ditambahkan');
@@ -37,7 +39,7 @@ class FormKeberatanServiceImpl implements FormKeberatanInterface
         }
     }
 
-    public function deleteFormKeberatan(FormKeberatan $form)
+    public function deleteForm(Model $form)
     {
        try {
             if($form->path_file_bukti && Storage::disk('public')->exists($form->path_file_bukti)){

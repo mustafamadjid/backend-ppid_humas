@@ -2,12 +2,13 @@
 namespace App\Services\Implementation;
 
 use App\Models\DynamicMenu;
-use App\Services\DynamicMenuInterface;
+use App\Services\DataServiceInterface;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
-class DynamicMenuImpl implements DynamicMenuInterface
+class DynamicMenuImpl implements DataServiceInterface
 {
-    public function createDynamicMenu(array $data){
+    public function createData(array $data){
         try {
             $menu = DynamicMenu::create([
                 'judul_menu' => $data['judul_menu'],
@@ -20,7 +21,7 @@ class DynamicMenuImpl implements DynamicMenuInterface
             throw $e;
         }
     }
-    public function getDynamicMenu()
+    public function getData()
     {
         try {
             $menu = DynamicMenu::all();
@@ -35,7 +36,7 @@ class DynamicMenuImpl implements DynamicMenuInterface
         }
     }
 
-    public function updateDynamicMenu(DynamicMenu $menu,array $data)
+    public function updateData(Model $menu,array $data)
     {
         try {
             $menu->update($data);
@@ -50,7 +51,7 @@ class DynamicMenuImpl implements DynamicMenuInterface
         }
     }
 
-    public function deleteDynamicMenu(DynamicMenu $menu)
+    public function deleteData(Model $menu)
     {
         try {
             $menu->delete();

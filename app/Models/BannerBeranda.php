@@ -5,18 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class MaklumatPelayanan extends Model
+class BannerBeranda extends Model
 {
     use HasFactory;
-    protected $table = 'maklumat_pelayanan';
-    protected $primaryKey = 'id_maklumat';
+    protected $table = 'banner_beranda';
+    protected $primaryKey = 'id_gambar';
     public $timestamps = true;
     protected $fillable = [
-        'deskripsi',
+        'path_gambar',
+        'order',
         'is_active'
     ];
 
     protected $casts = [
-        'is_active' => 'boolean',
+        'is_active' => 'boolean'
     ];
 }

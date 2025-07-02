@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\menuDataRequest\createMenuRequest;
 use App\Http\Requests\menuDataRequest\updateMenuRequest;
 use App\Models\DynamicMenu;
+use App\Services\DataServiceInterface;
 use App\Services\DynamicMenuInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -14,8 +15,8 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class DynamicMenuController extends Controller
 {
-    private DynamicMenuInterface $dynamicMenuService;
-    public function __construct(DynamicMenuInterface $dynamicMenuService)
+    private DataServiceInterface $dynamicMenuService;
+    public function __construct(DataServiceInterface $dynamicMenuService)
     {
         $this->dynamicMenuService = $dynamicMenuService;
     }   
@@ -23,7 +24,7 @@ class DynamicMenuController extends Controller
         try {
           
 
-            $data = $this->dynamicMenuService->createDynamicMenu($request->validated());
+            $data = $this->dynamicMenuService->createData($request->validated());
 
             return response()->json([
                 'status' => 200,
@@ -38,7 +39,7 @@ class DynamicMenuController extends Controller
 
     public function index(){
         try {
-            $data = $this->dynamicMenuService->getDynamicMenu();
+            $data = $this->dynamicMenuService->getData();
 
             return response()->json([
                 'status' => 200,
@@ -54,7 +55,7 @@ class DynamicMenuController extends Controller
     public function update(updateMenuRequest $request,$id){
         try {
             $menu = DynamicMenu::findOrFail($id);
-            $data = $this->dynamicMenuService->updateDynamicMenu($menu, $request->validated());
+            $data = $this->dynamicMenuService->updateData($menu, $request->validated());
 
             return response()->json([
                 'status' => 200,
@@ -74,7 +75,7 @@ class DynamicMenuController extends Controller
     public function destroy($id){
         try {
             $menu = DynamicMenu::findOrFail($id);
-            $this->dynamicMenuService->deleteDynamicMenu($menu);
+            $this->dynamicMenuService->deleteData($menu);
 
             return response()->json([
                 'status' => 200,

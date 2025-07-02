@@ -4,18 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\formPengaduanRequest\createFormPengaduanRequest;
 use App\Models\FormPengaduan;
-use App\Services\FormPengaduanInterface;
+use App\Services\FormServiceInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class FormPengaduanController extends Controller
 {
-    private FormPengaduanInterface $formPengaduan;
-    public function __construct(FormPengaduanInterface $formPengaduan){
-        $this->formPengaduan = $formPengaduan;
+    private FormServiceInterface $form;
+
+    public function __construct(FormServiceInterface $form)
+    {
+        $this->form = $form;
     }
 
     public function store (createFormPengaduanRequest $request){
@@ -32,7 +31,7 @@ class FormPengaduanController extends Controller
             );
             
 
-            $this->formPengaduan->createFormPengaduan($data);
+            $this->form->createForm($data);
 
             return response()->json([
                 'status' => 200,
@@ -47,7 +46,7 @@ class FormPengaduanController extends Controller
 
     public function index(){
         try {
-            $data = $this->formPengaduan->getFormPengaduan();
+            $data = $this->form->getForm();
 
             return response()->json([
                 'status' => 200,
@@ -61,9 +60,9 @@ class FormPengaduanController extends Controller
 
     public function destroy( $id){
         try {
-            $dataForm = FormPengaduan::findOrFail($id);
+            $formResult = FormPengaduan::findOrFail($id);
 
-            $this->formPengaduan->deleteFormPengaduan($dataForm);
+            $this->form->deleteForm($formResult);
 
             return response()->json([
                 'status' => 200,
