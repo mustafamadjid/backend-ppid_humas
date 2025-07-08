@@ -5,23 +5,22 @@ namespace App\Http\Controllers;
 use App\Http\Requests\dokumenDataRequest\createDokumenRequest;
 use App\Http\Requests\dokumenDataRequest\updateDokumenRequest;
 use App\Models\DokumenPublik;
-use App\Services\DokumenPublikInterface;
-use Illuminate\Database\Eloquent\Model;
+use App\Services\DataServiceInterface;
+use App\Services\DokumenServiceInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class DokumenPublikController extends Controller
 {
-    private DokumenPublikInterface $dokumen;
-    public function __construct (DokumenPublikInterface $dokumen){
+    private DokumenServiceInterface $dokumen;
+    public function __construct (DokumenServiceInterface $dokumen){
         $this->dokumen = $dokumen;
     }
 
     public function index(){
         try {
-            $data = $this->dokumen->getDokumenPublik();
+            $data = $this->dokumen->getData();
 
             return response()->json([
                 'status' => 200,
@@ -32,78 +31,110 @@ class DokumenPublikController extends Controller
             throw new HttpException(500, $th->getMessage());
         }
     }
+
+    public function getDataByTahun($tahun,$kategori){
+        try {
+            $data = $this->dokumen->getDataByTahun($tahun,$kategori);
+
+            if(!$data){
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'Data dokumen tidak ditemukan'
+                ],404);
+            }
+
+            if (Storage::disk('public')->exists($data->path_dokumen)) {
+                $url = asset('storage/' . $data->path_dokumen);
+            } else {
+                $url = null;
+            }
+
+            return response()->json([
+                'status' => 200,
+                'message' => "Data dokumen berhasil diambil",
+                'data' => $data,
+                'url' => $url
+            ]);
+            
+        }catch (\Throwable $e) {
+            throw new HttpException(500,$e->getMessage());
+        }
+    }
+
     public function store(createDokumenRequest $request){
         try {
-          
+            $data = $request->validated();
 
-            
-            
+            if($request->hasFile('file_dokumen')) {
             $file = $request->file('file_dokumen');
             $uniqueName = uniqid() . '_' . $file->getClientOriginalName();
             $path = $file->storePubliclyAs('dokumen', $uniqueName, 'public');
+            $data['path_dokumen'] = $path;
+            }
 
-            $data = array_merge(
-                $request->validated(),
-                ['path_dokumen' => $path]
-            );
-
-            $data = $this->dokumen->createDokumenPublik($data);
+            $result = $this->dokumen->createData($data);
             return response()->json([
-                'status' => 200,
-                'message' => 'Dokumen publik berhasil ditambahkan',
-                'data' => $data
+            'status' => 200,
+            'message' => 'Dokumen publik berhasil ditambahkan',
+            'data' => $result
             ], 200);
         } catch (\Throwable $th) {
             throw new HttpException(500, $th->getMessage());
         }
     }
-    public function update(updateDokumenRequest $request, $id){
+    public function update(updateDokumenRequest $request, $id)
+    {
         try {
-            $dokumen = DokumenPublik::findOrFail($id);
+            $data = $request->validated();
 
-           
+            if ($request->hasFile('file_dokumen')) {
+                $file = $request->file('file_dokumen');
+                $uniqueName = uniqid() . '_' . $file->getClientOriginalName();
+                $path = $file->storePubliclyAs('dokumen', $uniqueName, 'public');
+                $data['path_dokumen'] = $path;
+            }
 
-            $file = $request->file('file_dokumen');
-            $uniqueName = uniqid() . '_' . $file->getClientOriginalName();
-            $path = $file->storePubliclyAs('dokumen', $uniqueName, 'public');
+            $updated = $this->dokumen->updateData($id, $data);
 
-            $data = array_merge(
-                $request->validated(),
-                ['path_dokumen' => $path]
-            );
+            if (!$updated) {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'Dokumen publik tidak ditemukan'
+                ], 404);
+            }
 
-            $data = $this->dokumen->updateDokumenPublik($dokumen,$data);
             return response()->json([
                 'status' => 200,
                 'message' => 'Dokumen publik berhasil diupdate',
-                'data' => $data
+                'data' => $updated // atau bisa hanya $data, sesuai kebutuhan
             ], 200);
 
-        } catch (ModelNotFoundException $e) {
-            return response()->json([
-                'status' => 404,
-                'message' => 'Dokumen publik tidak ditemukan'
-            ], 404);
-        }catch (\Throwable $th) {
+        } catch (\Throwable $th) {
             throw new HttpException(500, $th->getMessage());
         }
     }
-    public function destroy($id){
+
+    public function destroy($id)
+    {
         try {
-            $dokumen = DokumenPublik::findOrFail($id);
-            $this->dokumen->deleteDokumenPublik($dokumen);
+            $deleted = $this->dokumen->deleteData($id);
+
+            if (!$deleted) {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'Dokumen publik tidak ditemukan'
+                ], 404);
+            }
+
             return response()->json([
                 'status' => 200,
                 'message' => 'Dokumen publik berhasil dihapus'
             ], 200);
-        } catch (ModelNotFoundException $e) {
-            return response()->json([
-                'status' => 404,
-                'message' => 'Dokumen publik tidak ditemukan'
-            ],404);
-        }catch (\Throwable $th) {
+
+        } catch (\Throwable $th) {
             throw new HttpException(500, $th->getMessage());
         }
     }
+
 
 }

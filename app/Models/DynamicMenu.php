@@ -14,6 +14,7 @@ class DynamicMenu extends Model
     protected $fillable = [
         'judul_menu',
         'url',
+        'icon',
         'is_active',
     ];
 
