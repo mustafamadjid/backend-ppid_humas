@@ -49,19 +49,20 @@ class MaklumatPelayananController extends Controller
     public function update(updateRequest $request,$id)
     {
         try {
-            $maklumat = MaklumatPelayanan::findOrFail($id);
-            $data = $this->maklumatPelayanan->updateData($maklumat,$request->validated());
+            $data = $this->maklumatPelayanan->updateData($id,$request->validated());
+
+            if(!$data){
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'Data maklumat pelayanan tidak ditemukan'
+                ],404);
+            }
 
             return response()->json([
                 'status' => 200,
                 'message' => 'Data maklumat pelayanan berhasil diupdate',
                 'data' => $data
             ],200);
-        } catch(ModelNotFoundException $e){
-            return response()->json([
-                'status' => 404,
-                'message' => 'Data maklumat pelayanan tidak ditemukan'
-            ],404);
         }
         catch (\Throwable $e) {
             throw new HttpException(500,$e->getMessage());
@@ -70,20 +71,21 @@ class MaklumatPelayananController extends Controller
     public function destroy($id)
     {
         try {
-            $maklumat = MaklumatPelayanan::findOrFail($id);
-            $data = $this->maklumatPelayanan->deleteData($maklumat);
+            $data = $this->maklumatPelayanan->deleteData($id);
+
+            if(!$data){
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'Data maklumat pelayanan tidak ditemukan'
+                ],404);
+            }
 
             return response()->json([
                 'status' => 200,
                 'message' => 'Data maklumat pelayanan berhasil dihapus',
                 'data' => $data
             ]);
-        } catch (ModelNotFoundException $e) {
-            return response()->json([
-                'status' => 404,
-                'message' => 'Data maklumat pelayanan tidak ditemukan'
-            ], 404);
-        } catch (\Throwable$e) {
+        }catch (\Throwable$e) {
             throw new HttpException(500, $e->getMessage());
         }
     }

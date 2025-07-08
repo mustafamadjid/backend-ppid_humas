@@ -6,11 +6,7 @@ use App\Http\Requests\menuDataRequest\createMenuRequest;
 use App\Http\Requests\menuDataRequest\updateMenuRequest;
 use App\Models\DynamicMenu;
 use App\Services\DataServiceInterface;
-use App\Services\DynamicMenuInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class DynamicMenuController extends Controller
@@ -52,42 +48,47 @@ class DynamicMenuController extends Controller
         }
     }
 
-    public function update(updateMenuRequest $request,$id){
+    public function update(updateMenuRequest $request, $id)
+    {
         try {
-            $menu = DynamicMenu::findOrFail($id);
-            $data = $this->dynamicMenuService->updateData($menu, $request->validated());
+            $data = $this->dynamicMenuService->updateData($id, $request->validated());
+
+            if (!$data) {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'Menu tidak ditemukan'
+                ], 404);
+            }
 
             return response()->json([
                 'status' => 200,
                 'message' => 'Data menu berhasil diupdate',
                 'data' => $data
             ]);
-        } catch (ModelNotFoundException $e) {
-            return response()->json([
-                'status' => 404,
-                'message' => 'Menu tidak ditemukan'
-            ], 404);
-        }catch (\Throwable $e) {
+        } catch (\Throwable $e) {
             throw new HttpException(500, $e->getMessage());
         }
     }
 
-    public function destroy($id){
+    public function destroy($id)
+    {
         try {
-            $menu = DynamicMenu::findOrFail($id);
-            $this->dynamicMenuService->deleteData($menu);
+            $result= $this->dynamicMenuService->deleteData($id);
+
+            if (!$result) {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'Menu tidak ditemukan'
+                ], 404);
+            }
 
             return response()->json([
                 'status' => 200,
                 'message' => 'Data menu berhasil dihapus',
             ]);
-    }catch (ModelNotFoundException $e) {
-            return response()->json([
-                'status' => 404,
-                'message' => 'Menu tidak ditemukan'
-            ], 404);
-        }catch (\Throwable $e) {
+        } catch (\Throwable $e) {
             throw new HttpException(500, $e->getMessage());
         }
     }
+
 }

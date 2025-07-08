@@ -3,29 +3,36 @@ namespace App\Services\Implementation\Auth;
 
 use App\Models\User;
 use App\Services\AuthServices\AuthServiceInterface;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 
 class AuthServiceImpl implements AuthServiceInterface
 {
-    public function doLogin(User $user,string $password)
+    public function doLogin(string $email,string $password)
     {
         try {
+            $user = User::where('email',$email)->firstOrFail();
+
            if(Hash::check($password,$user->password)){
             Log::info('Percobaan login berhasil',[
-                'username' => $user->username,
-                "time" => now()
+                'email' => $user->email,
+                "time" => now()->toDateTimeString()
             ]);
-                return $user->createToken($user->username)->plainTextToken;
+                return $user->createToken($user->email)->plainTextToken;
+           }else{
+               Log::warning('Percobaan login gagal (password tidak sesuai)',[
+                'email' => $user->email,
+                "time" => now()->toDateTimeString()   
+            ]);
            }
-           Log::warning('Percobaan login gagal (password salah)',[
-            'username' => $user->username,
-            "time" => now()
-        ]);
            return false;
+        }catch(ModelNotFoundException $e){
+            Log::error('Percobaan login gagal (User tidak ditemukan)',["time" => now()->toDateTimeString()]);
+            return false;
         } catch (\Throwable$e) {
-            Log::error('Percobaan login gagal (Masalah pada server)',["time" => now()]);
+            Log::error('Percobaan login gagal (Masalah pada server)',["time" => now()->toDateTimeString()]);
             throw $e;
         }
     }   

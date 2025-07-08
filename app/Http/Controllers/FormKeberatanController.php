@@ -58,18 +58,19 @@ class FormKeberatanController extends Controller
 
     public function destroy($id){
         try {
-            $formResult = FormKeberatan::findOrFail($id);
-            $this->form->deleteForm($formResult);
+           $result = $this->form->deleteForm($id);
+
+            if (!$result) {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'Data form keberatan tidak ditemukan'
+                ], 404);
+            }
 
             return response()->json([
                 'status' => 200,
                 'message' => 'Data form keberatan berhasil dihapus'
             ], 200);
-        } catch (ModelNotFoundException $e) {
-            return response()->json([
-                'status' => 404,
-                'message' => 'Data form keberatan tidak ditemukan'
-            ], 404);
         }catch(\Throwable $e) {
             throw new HttpException(500, $e->getMessage());
         }

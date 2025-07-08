@@ -42,7 +42,7 @@ class updateDokumenRequest extends FormRequest
             'file_dokumen' => [
                 'sometimes',
                 'file',
-                'mimes:jpeg,pdf',
+                'mimes:pdf',
                 'max:20480'
             ]
         ];

@@ -60,19 +60,19 @@ class FormPengaduanController extends Controller
 
     public function destroy( $id){
         try {
-            $formResult = FormPengaduan::findOrFail($id);
+           $result = $this->form->deleteForm($id);
 
-            $this->form->deleteForm($formResult);
+            if (!$result) {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'Data pengaduan tidak ditemukan'
+                ], 404);
+            }
 
             return response()->json([
                 'status' => 200,
                 'message' => 'Data pengaduan berhasil dihapus'
             ], 200);
-        } catch (ModelNotFoundException $e) {
-            return response()->json([
-                'status' => 404,
-                'message' => 'Pengaduan tidak ditemukan'
-            ], 404);
         }catch(\Throwable $e) {
             throw new HttpException(500, $e->getMessage());
         }

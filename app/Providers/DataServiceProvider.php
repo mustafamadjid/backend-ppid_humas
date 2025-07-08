@@ -3,20 +3,34 @@
 namespace App\Providers;
 
 use App\Http\Controllers\BannerBerandaController;
-use App\Http\Controllers\DokumenPublikController;
+use App\Http\Controllers\DeskripsiHalamanDokumenController;
 use App\Http\Controllers\DynamicMenuController;
+use App\Http\Controllers\GambarSopController;
+use App\Http\Controllers\JabatanOrganisasiController;
 use App\Http\Controllers\MaklumatPelayananController;
+use App\Http\Controllers\PegawaiServiceController;
+use App\Http\Controllers\ProfilPpidController;
 use App\Http\Controllers\UserDataServiceController;
 use App\Services\DataServiceInterface;
 use App\Services\Implementation\BannerBerandaImpl;
-use App\Services\Implementation\DokumenPublikImpl;
+use App\Services\Implementation\DeskripsiHalamanDokumenImpl;
 use App\Services\Implementation\DynamicMenuImpl;
+use App\Services\Implementation\GambarSopServiceImpl;
+use App\Services\Implementation\JabatanOrganisasiServiceImpl;
 use App\Services\Implementation\MaklumatPelayananServiceImpl;
+use App\Services\Implementation\PegawaiServiceImpl;
+use App\Services\Implementation\ProfilPpidServiceImpl;
 use App\Services\Implementation\UserDataServiceImpl;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
-class DataServiceProvider extends ServiceProvider
+class DataServiceProvider extends ServiceProvider implements DeferrableProvider
 {
+    public function provides() {
+        return [
+            DataServiceInterface::class
+        ];
+    }
     /**
      * Register services.
      */
@@ -27,25 +41,46 @@ class DataServiceProvider extends ServiceProvider
         ->needs(DataServiceInterface::class)
         -> give(BannerBerandaImpl::class);
 
-        // Binding Dokumen Publik
-        $this->app->when(DokumenPublikController::class)
-        ->needs(DataServiceInterface::class)
-        -> give(DokumenPublikImpl::class);
-
         // Binding Dynamic menu
         $this->app->when(DynamicMenuController::class)
         ->needs(DataServiceInterface::class)
-        -> give(DynamicMenuImpl::class);
+        ->give(DynamicMenuImpl::class);
 
         // Binding Maklumat Pelayanan
         $this->app->when(MaklumatPelayananController::class)
         ->needs(DataServiceInterface::class)
-        -> give(MaklumatPelayananServiceImpl::class);
+        ->give(MaklumatPelayananServiceImpl::class);
 
         // Binding User Data
         $this->app->when(UserDataServiceController::class)
         ->needs(DataServiceInterface::class)
-        -> give(UserDataServiceImpl::class);
+        ->give(UserDataServiceImpl::class);
+
+        // Binding Jabatan Organisasi
+        $this->app->when(JabatanOrganisasiController::class)
+        ->needs(DataServiceInterface::class)
+        ->give(JabatanOrganisasiServiceImpl::class);
+
+        // Binding Gambar SOP
+        $this->app->when(GambarSopController::class)
+        ->needs(DataServiceInterface::class)
+        ->give(GambarSopServiceImpl::class);
+
+        // Binding Deskripsi Halaman Dokumen
+        $this->app->when(DeskripsiHalamanDokumenController::class)
+        ->needs(DataServiceInterface::class)
+        ->give(DeskripsiHalamanDokumenImpl::class);
+
+        // Binding Profil ppid
+        $this->app->when(ProfilPpidController::class)
+        ->needs(DataServiceInterface::class)
+        ->give(ProfilPpidServiceImpl::class);
+
+        // Binding Pegawai
+        $this->app->when(PegawaiServiceController::class)
+        ->needs(DataServiceInterface::class)
+        ->give(PegawaiServiceImpl::class);
+
     }
 
     /**

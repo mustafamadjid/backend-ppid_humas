@@ -51,20 +51,21 @@ class FormPermohonanInformasiController extends Controller
     public function destroy(string $id)
     {
         try {
-            $formResult = FormPermohonanInformasi::findOrFail($id);
-            $this->form->deleteForm($formResult);
+            
+            $result = $this->form->deleteForm($id);
+
+            if (!$result) {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'Data form permohonan informasi tidak ditemukan'
+                ], 404);
+            }
 
             return response()->json([
                 'status' => 200,
                 'message' => 'Data form permohonan informasi berhasil dihapus'
             ]);
-        }catch(ModelNotFoundException $e){
-            return response()->json([
-                'status' => 404,
-                'message' => 'Data form permohonan informasi tidak ditemukan'
-            ], 404);
-        }
-        catch(\Throwable $e){
+        }catch(\Throwable $e){
             throw new HttpException(500, $e->getMessage());
         }
     }

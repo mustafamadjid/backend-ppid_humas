@@ -42,7 +42,7 @@ class createDokumenRequest extends FormRequest
             'file_dokumen' => [
                 'required',
                 'file',
-                'mimes:jpeg,pdf',
+                'mimes:pdf',
                 'max:20480'
             ]
         ];

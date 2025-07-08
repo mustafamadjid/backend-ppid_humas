@@ -59,20 +59,21 @@ class UserDataServiceController extends Controller
     public function update(UpdateUserRequest $request, $id)
     {
         try {
-            $user = User::findOrFail($id);
-            $data = $this->userDataService->updateData($user, $request->validated( ));
+            $data = $this->userDataService->updateData($id, $request->validated( ));
+
+            if(!$data ){
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'User tidak ditemukan'
+                ], 404);
+            }
     
             return response()->json([
                 'status' => 200,
                 'message' => 'Data user berhasil diupdate',
                 'data' => $data
             ]);
-        } catch (ModelNotFoundException $e) {
-            return response()->json([
-                'status' => 404,
-                'message' => 'User tidak ditemukan'
-            ], 404);
-        } catch (\Throwable $e) {
+        }catch (\Throwable $e) {
             throw new HttpException(500, $e->getMessage());
         }
     }
@@ -80,19 +81,21 @@ class UserDataServiceController extends Controller
     public function destroy($id)
     {
         try {
-            $user = User::findOrFail($id);
-            $data = $this->userDataService->deleteData($user);
+            
+            $data = $this->userDataService->deleteData($id);
+
+            if (!$data) {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'User tidak ditemukan'
+                ], 404);
+            }
 
             return response()->json([
                 'status' => 200,
                 'message' => 'Data user berhasil dihapus',
                 'data' => $data
             ]);
-        } catch (ModelNotFoundException $e) {
-            return response()->json([
-                'status' => 404,
-                'message' => 'User tidak ditemukan'
-            ], 404);
         } catch (\Throwable$e) {
             throw new HttpException(500, $e->getMessage());
         }

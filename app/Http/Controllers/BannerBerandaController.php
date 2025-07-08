@@ -51,52 +51,56 @@ class BannerBerandaController extends Controller
             throw new HttpException(500, $th->getMessage());
         }
     }
-    public function update(updateRequest $request,$id)
+    public function update(updateRequest $request, $id)
     {
         try {
-            $bannerBeranda = BannerBeranda::findOrFail($id);
-            $file = $request->file('file_gambar');
-            $uniqueName = uniqid() . '_' . $file->getClientOriginalName();
-            $path = $file->storePubliclyAs('banner_beranda', $uniqueName, 'public');
-
-            $data = array_merge(
-                $request->validated(),
-                ['path_gambar' => $path]
-            );
-
-            $result = $this->banner->updateData($bannerBeranda,$data);
+            $data = $request->validated();
+    
+            if ($request->hasFile('file_gambar')) {
+                $file = $request->file('file_gambar');
+                $uniqueName = uniqid() . '_' . $file->getClientOriginalName();
+                $path = $file->storePubliclyAs('banner_beranda', $uniqueName, 'public');
+                $data['path_gambar'] = $path;
+            }
+    
+            $result = $this->banner->updateData($id, $data);
+    
+            if (!$result) {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'Data gambar banner beranda tidak ditemukan'
+                ], 404);
+            }
+    
             return response()->json([
                 'status' => 200,
                 'message' => 'Data gambar banner beranda berhasil diupdate',
                 'data' => $result
             ], 200);
-        } catch(ModelNotFoundException $e){
-            return response()->json([
-                'status' => 404,
-                'message' => 'Data gambar banner beranda tidak ditemukan'
-            ], 404);
-        }
-         catch (\Throwable $th) {
+        } catch (\Throwable $th) {
             throw new HttpException(500, $th->getMessage());
         }
     }
+    
     public function destroy($id)
     {
         try {
-            $bannerBeranda = BannerBeranda::findOrFail($id);
-            $this->banner->deleteData($bannerBeranda);
+            $result = $this->banner->deleteData($id);
+    
+            if (!$result) {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'Data gambar banner beranda tidak ditemukan'
+                ], 404);
+            }
+    
             return response()->json([
                 'status' => 200,
                 'message' => 'Data gambar banner beranda berhasil dihapus',
             ], 200);
-        } catch(ModelNotFoundException $e){
-            return response()->json([
-                'status' => 404,
-                'message' => 'Data gambar banner beranda tidak ditemukan'
-            ], 404);
-        }
-         catch (\Throwable $th) {
+        } catch (\Throwable $th) {
             throw new HttpException(500, $th->getMessage());
         }
     }
+    
 }
