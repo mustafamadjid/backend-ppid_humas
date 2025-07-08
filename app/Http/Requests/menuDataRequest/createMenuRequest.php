@@ -31,6 +31,10 @@ class createMenuRequest extends FormRequest
                     'required',
                     'string',
                     'url'
+                ],
+                'icon' => [
+                    'required',
+                    'string'
                 ]
         ];
     }

@@ -201,4 +201,29 @@ public function test_fail_doctype_updateDokumenPublik()
           'errors',
       ]);
 }
+
+public function test_success_deleteDokumenPublik(){
+    $dokumen= DokumenPublik::create()->factory();
+
+    $this->withHeaders([
+        'Authorization' => 'Bearer ' . $this->userToken(),
+        'Accept' => 'application/json',
+    ])->delete('ppid/dokumen-publik/'. $dokumen->id)
+    ->assertStatus(200)
+    ->assertJsonStructure([
+        'status',
+        'message'
+    ]);
+}
+public function test_fail_not_found_deleteDokumenPublik(){
+    $this->withHeaders([
+        'Authorization' => 'Bearer ' . $this->userToken(),
+        'Accept' => 'application/json',
+    ])->delete('ppid/dokumen-publik/99999')
+    ->assertStatus(404)
+    ->assertJsonStructure([
+        'status',
+        'message'
+    ]);
+}
 }

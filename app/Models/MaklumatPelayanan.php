@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class MaklumatPelayanan extends Model
 {
-    protected $table = "maklumat_pelayanan";
-    protected $primaryKey = "id_maklumat";
+    use HasFactory;
+    protected $table = 'maklumat_pelayanan';
+    protected $primaryKey = 'id_maklumat';
     public $timestamps = true;
     protected $fillable = [
         'deskripsi',
