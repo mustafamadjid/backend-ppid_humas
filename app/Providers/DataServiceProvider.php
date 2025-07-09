@@ -10,6 +10,7 @@ use App\Http\Controllers\JabatanOrganisasiController;
 use App\Http\Controllers\MaklumatPelayananController;
 use App\Http\Controllers\PegawaiServiceController;
 use App\Http\Controllers\ProfilPpidController;
+use App\Http\Controllers\SematanAplikasiController;
 use App\Http\Controllers\UserDataServiceController;
 use App\Services\DataServiceInterface;
 use App\Services\Implementation\BannerBerandaImpl;
@@ -20,6 +21,7 @@ use App\Services\Implementation\JabatanOrganisasiServiceImpl;
 use App\Services\Implementation\MaklumatPelayananServiceImpl;
 use App\Services\Implementation\PegawaiServiceImpl;
 use App\Services\Implementation\ProfilPpidServiceImpl;
+use App\Services\Implementation\SematanAplikasiImpl;
 use App\Services\Implementation\UserDataServiceImpl;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
@@ -66,11 +68,6 @@ class DataServiceProvider extends ServiceProvider implements DeferrableProvider
         ->needs(DataServiceInterface::class)
         ->give(GambarSopServiceImpl::class);
 
-        // Binding Deskripsi Halaman Dokumen
-        $this->app->when(DeskripsiHalamanDokumenController::class)
-        ->needs(DataServiceInterface::class)
-        ->give(DeskripsiHalamanDokumenImpl::class);
-
         // Binding Profil ppid
         $this->app->when(ProfilPpidController::class)
         ->needs(DataServiceInterface::class)
@@ -80,6 +77,11 @@ class DataServiceProvider extends ServiceProvider implements DeferrableProvider
         $this->app->when(PegawaiServiceController::class)
         ->needs(DataServiceInterface::class)
         ->give(PegawaiServiceImpl::class);
+
+        // Binding Sematan Aplikasi
+        $this->app->when(SematanAplikasiController::class)
+        ->needs(DataServiceInterface::class)
+        ->give(SematanAplikasiImpl::class);
 
     }
 

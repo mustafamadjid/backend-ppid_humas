@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\PegawaiRequest;
+namespace App\Http\Requests\SematanAplikasiRequest;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -22,25 +22,20 @@ class updateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "nama_pegawai" =>[
-                "sometimes",
-                "string",
-                "max:100"
-            ],
-            "email"=>[
-                "sometimes",
-                "email",
-                "max:100"
-            ],
-            "file_gambar"=>[
-                "sometimes",
-                "file",
-                "mimes:jpeg,jpg,png",
-                "max:5120"
-            ],
-            'id_jabatan' => [
+            'judul_sematan' =>[
                 'sometimes',
-                'integer'
+                'string',
+                'max:50'
+            ],
+            'url_sematan'=>[
+                'sometimes',
+                'url',
+                'max:255'
+            ],
+            'icon'=>[
+                'sometimes',
+                'string',
+                'max:100'
             ]
         ];
     }

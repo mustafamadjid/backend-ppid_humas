@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\PegawaiRequest;
+namespace App\Http\Requests\SematanAplikasiRequest;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class updateRequest extends FormRequest
+class createRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,25 +22,20 @@ class updateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "nama_pegawai" =>[
-                "sometimes",
-                "string",
-                "max:100"
+            'judul_sematan' =>[
+                'required',
+                'string',
+                'max:50'
             ],
-            "email"=>[
-                "sometimes",
-                "email",
-                "max:100"
+            'url_sematan'=>[
+                'required',
+                'url',
+                'max:255'
             ],
-            "file_gambar"=>[
-                "sometimes",
-                "file",
-                "mimes:jpeg,jpg,png",
-                "max:5120"
-            ],
-            'id_jabatan' => [
+            'icon'=>[
                 'sometimes',
-                'integer'
+                'string',
+                'max:100'
             ]
         ];
     }

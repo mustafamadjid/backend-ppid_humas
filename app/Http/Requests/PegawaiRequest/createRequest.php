@@ -37,6 +37,10 @@ class createRequest extends FormRequest
                 "file",
                 "mimes:jpeg,jpg,png",
                 "max:5120"
+            ],
+            'id_jabatan' => [
+                'required',
+                'integer'
             ]
         ];
     }

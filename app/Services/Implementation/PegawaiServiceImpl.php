@@ -1,6 +1,7 @@
 <?php 
 namespace App\Services\Implementation;
 
+use App\Models\JabatanAssginments;
 use App\Models\Pegawai;
 use App\Services\DataServiceInterface;
 use Illuminate\Database\Eloquent\Model;
@@ -30,11 +31,23 @@ class PegawaiServiceImpl implements DataServiceInterface
     public function createData(array $data)
     {
         try {
-            $result = Pegawai::create($data);
+            $pegawai = Pegawai::create($data);
+
+            $idJabatan = $data['id_jabatan'];
+            $idPegawai = $pegawai->id_pegawai;
+
+            $jabatanAssign = JabatanAssginments::create([
+                'id_jabatan' => $idJabatan,
+                'id_pegawai' => $idPegawai
+            ]);
+
             Log::info("Data pegawai berhasil ditambahkan", [
                 "time" => now()->toDateTimeString()
             ]);
-            return $result;
+
+            return [$pegawai, $jabatanAssign];
+           
+
         } catch (\Throwable $th) {
             Log::error("Data pegawai gagal ditambahkan", [
                 'error' => $th->getMessage(),
@@ -47,8 +60,23 @@ class PegawaiServiceImpl implements DataServiceInterface
     public function updateData( $id, array $data)
     {
         try{
-            $pegawai = Pegawai::findOrFail($id);
-            $result = $pegawai->update($data);
+            $idPegawai = Pegawai::findOrFail($id);
+
+            if(isset($data['id_jabatan'])){
+                $jabatanAssign = JabatanAssginments::where('id_pegawai', $id)->first();
+
+                if(!$jabatanAssign){
+                    return response()->json([
+                        'status' => 404,
+                        'message' => 'Data jabatan tidak ditemukan',
+                    ],404);
+                }
+
+                $jabatanAssign->id_jabatan = $data['id_jabatan'];
+                $jabatanAssign->save();
+            }
+
+            $result = $idPegawai->update($data);
 
             if($result){
                 Log::info("Data pegawai berhasil diupdate", [

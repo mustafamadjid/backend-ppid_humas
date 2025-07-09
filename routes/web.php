@@ -11,7 +11,9 @@ use App\Http\Controllers\FormPermohonanInformasiController;
 use App\Http\Controllers\GambarSopController;
 use App\Http\Controllers\JabatanOrganisasiController;
 use App\Http\Controllers\MaklumatPelayananController;
+use App\Http\Controllers\PegawaiServiceController;
 use App\Http\Controllers\ProfilPpidController;
+use App\Http\Controllers\SematanAplikasiController;
 use App\Http\Controllers\UserDataServiceController;
 use Illuminate\Support\Facades\Route;
 
@@ -119,6 +121,22 @@ Route::prefix('/ppid')->middleware(['auth:sanctum','throttle:logged-in'])->group
         Route::put('/{id}', 'update');
         Route::delete('/{id}', 'destroy');
     });
+
+    // Sematan aplikasi
+    Route::prefix('/sematan-aplikasi')->controller(SematanAplikasiController::class)->group(function(){
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::put('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
+    });
+
+    // Pegawai
+    Route::prefix('/pegawai')->controller(PegawaiServiceController::class)->group(function(){
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::put('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
+    });
 });
 
 // API Publik
@@ -143,6 +161,9 @@ Route::get('/deskripsi-halaman-dokumen/{kategori}',[DeskripsiHalamanDokumenContr
 
 // Profil ppid
 Route::get(('/profil-ppid'),[ProfilPpidController::class,'index']);
+
+// Sematan Aplikasi
+Route::get('/sematan-aplikasi', [SematanAplikasiController::class,'index']);
 
 });
 

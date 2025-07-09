@@ -3,10 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use App\Services\UserRegistrationServiceInterface;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
 class UserRegistrationServiceTest extends TestCase
@@ -35,13 +31,13 @@ class UserRegistrationServiceTest extends TestCase
         
 
         $data = [
-            'username' => 'lojehong',
-            'email' => 'lojehong@example',
-            'password' => 'password123',
-            'role' => 'admin'
+            'username' => 'admingacor',
+            'email' => 'admin@example.com',
+            'password' => 'admin123',
+            'role' => 'superadmin'
         ];
 
-        $this->withHeader('Authorization', 'Bearer 25|efM5P68RBEMG7CaJPAH1swZuXgr5GME2bHVnqEBUb5fac790')->post('/ppid/user/register', $data)
+        $this->post('/register', $data)
             ->assertStatus(201)
             ->assertJson([
                 'status' => 201,

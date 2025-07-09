@@ -2,48 +2,50 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfilPpidRequest\createRequest;
-use App\Http\Requests\ProfilPpidRequest\updateRequest;
+use App\Http\Requests\SematanAplikasiRequest\createRequest;
+use App\Http\Requests\SematanAplikasiRequest\updateRequest;
 use App\Services\DataServiceInterface;
-use Dflydev\DotAccessData\Data;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class ProfilPpidController extends Controller
+class SematanAplikasiController extends Controller
 {
     private DataServiceInterface $service;
 
     public function __construct(DataServiceInterface $service){
         $this->service = $service;
     }
+
     public function index()
     {
-        try {
+        try{
             $data = $this->service->getData();
+
             return response()->json([
                 'status' => 200,
-                'message' => 'Data semua profil ppid berhasil diambil',
+                'message' => 'Data semua sematan aplikasi berhasil diambil',
                 'data' => $data
             ],200);
-        } catch (\Throwable $e) {
-            throw new HttpException(500,$e->getMessage());
+
+        }catch(\Throwable $th){
+            throw new HttpException(500,$th->getMessage());
         }
     }
 
     public function store(createRequest $request)
     {
         try {
-            $data = $request->validated();
+        $data = $request->validated();
 
-            $result = $this->service->createData($data);
+        $result = $this->service->createData($data);
 
-            return response()->json([
-                'status' => 200,
-                'message' => 'Data profil ppid berhasil ditambahkan',
-                'data' => $result
-            ],200);
-        } catch (\Throwable $e) {
-            throw new HttpException(500,$e->getMessage());
+        return response()->json([
+            'status' => 200,
+            'message' => 'Data sematan aplikasi berhasil ditambahkan',
+            'data' => $result
+        ],200);
+        } catch (\Throwable $th) {
+            throw new HttpException(500,$th->getMessage());
         }
     }
 
@@ -57,17 +59,17 @@ class ProfilPpidController extends Controller
             if(!$result){
                 return response()->json([
                     'status' => 404,
-                    'message' => 'Data profil ppid tidak ditemukan'
+                    'message' => 'Data sematan aplikasi tidak ditemukan'
                 ],404);
             }
 
             return response()->json([
                 'status' => 200,
-                'message' => 'Data profil ppid berhasil diupdate',
+                'message' => 'Data sematan aplikasi berhasil diupdate',
                 'data' => $result
-            ],200);
-        } catch (\Throwable $e) {
-            throw new HttpException(500,$e->getMessage());
+            ]);
+        } catch (\Throwable $th) {
+            throw new HttpException(500,$th->getMessage());
         }
     }
 
@@ -76,17 +78,17 @@ class ProfilPpidController extends Controller
         try {
             $result = $this->service->deleteData($id);
 
-            if(!$result){
+            if (!$result) {
                 return response()->json([
                     'status' => 404,
-                    'message' => 'Data profil ppid tidak ditemukan'
-                ],404);
+                    'message' => 'Data sematan aplikasi tidak ditemukan'
+                ], 404);
             }
 
             return response()->json([
                 'status' => 200,
-                'message' => 'Data profil ppid berhasil dihapus'
-            ],200);
+                'message' => 'Data sematan aplikasi berhasil dihapus'
+            ]);
         } catch (\Throwable $th) {
             throw new HttpException(500,$th->getMessage());
         }

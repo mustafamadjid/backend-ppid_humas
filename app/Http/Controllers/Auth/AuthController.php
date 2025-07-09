@@ -23,7 +23,7 @@ class AuthController extends Controller
         try {
             $validated = $request->validated();
         
-            $auth = $this->authService->doLogin($validated['email'], $validated->validated()['password']);
+            $auth = $this->authService->doLogin($validated['email'], $validated['password']);
                 
 
             if(!$auth){
