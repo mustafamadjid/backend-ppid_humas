@@ -2,10 +2,11 @@
 
 namespace App\Providers;
 
+use App\Http\Controllers\AktivitasTerbaruController;
 use App\Http\Controllers\BannerBerandaController;
-use App\Http\Controllers\DeskripsiHalamanDokumenController;
 use App\Http\Controllers\DynamicMenuController;
 use App\Http\Controllers\GambarSopController;
+use App\Http\Controllers\InfografisServiceController;
 use App\Http\Controllers\JabatanOrganisasiController;
 use App\Http\Controllers\MaklumatPelayananController;
 use App\Http\Controllers\PegawaiServiceController;
@@ -13,15 +14,16 @@ use App\Http\Controllers\ProfilPpidController;
 use App\Http\Controllers\SematanAplikasiController;
 use App\Http\Controllers\UserDataServiceController;
 use App\Services\DataServiceInterface;
+use App\Services\Implementation\AktivitasTerbaruImpl;
 use App\Services\Implementation\BannerBerandaImpl;
-use App\Services\Implementation\DeskripsiHalamanDokumenImpl;
 use App\Services\Implementation\DynamicMenuImpl;
 use App\Services\Implementation\GambarSopServiceImpl;
+use App\Services\Implementation\InfografisServiceImpl;
 use App\Services\Implementation\JabatanOrganisasiServiceImpl;
 use App\Services\Implementation\MaklumatPelayananServiceImpl;
 use App\Services\Implementation\PegawaiServiceImpl;
 use App\Services\Implementation\ProfilPpidServiceImpl;
-use App\Services\Implementation\SematanAplikasiImpl;
+use App\Services\Implementation\SematanAplikasiImpl;kkjkj
 use App\Services\Implementation\UserDataServiceImpl;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
@@ -82,6 +84,16 @@ class DataServiceProvider extends ServiceProvider implements DeferrableProvider
         $this->app->when(SematanAplikasiController::class)
         ->needs(DataServiceInterface::class)
         ->give(SematanAplikasiImpl::class);
+
+        // Binding infografis
+        $this->app->when(InfografisServiceController::class)
+        ->needs(DataServiceInterface::class)
+        ->give(InfografisServiceImpl::class);
+
+        // Binding aktivitas terbaru
+        $this->app->when(AktivitasTerbaruController::class)
+        ->needs(DataServiceInterface::class)
+        ->give(AktivitasTerbaruImpl::class);
 
     }
 

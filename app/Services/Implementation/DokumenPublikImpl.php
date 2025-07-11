@@ -51,6 +51,31 @@ class DokumenPublikImpl implements DokumenServiceInterface
         }
     }
 
+    public function getDataByKategori(string $kategori){
+        try {
+            $result = DokumenPublik::where('kategori_dokumen',$kategori)->firstOrFail();
+
+            Log::info("Dokumen publik berhasil diambil", [
+                "time" => now()->toDateTimeString()
+            ]);
+            return $result;
+        }catch(ModelNotFoundException $e){
+            Log::error("Dokumen publik gagal diambil", [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                "time" => now()->toDateTimeString()
+            ]);
+            return false;
+        } catch (\Throwable $th) {
+            Log::error("Gagal ambil dokumen publik", [
+                'error' => $th->getMessage(),
+                'trace' => $th->getTraceAsString(),
+                "time" => now()->toDateTimeString()
+            ]);
+            throw $th;
+        }
+    }
+
     public function createData(array $data){
         try {
             $result = DokumenPublik::create($data);

@@ -7,6 +7,7 @@ interface DokumenServiceInterface
 {
     public function getData();
     public function getDataByTahun(int $tahun,string $kategori);
+    public function getDataByKategori(string $kategori);
     public function createData(array $data);
     public function updateData($id, array $data);
     public function deleteData($id);

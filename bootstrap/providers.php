@@ -3,6 +3,7 @@
 return [
     App\Providers\AppServiceProvider::class,
     App\Providers\AuthProvider\AuthServiceProvider::class,
+    App\Providers\DashboardServiceProvider::class,
     App\Providers\DataServiceProvider::class,
     App\Providers\DeskripsiHalamanDokumenProvider::class,
     App\Providers\DokumenServiceProvider::class,

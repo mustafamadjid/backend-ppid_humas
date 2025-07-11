@@ -61,23 +61,76 @@ class DokumenPublikController extends Controller
         }
     }
 
+    public function showDataByKategori($kategori){
+        try {
+            $data = $this->dokumen->getDataByKategori($kategori);
+
+            if(!$data){
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'Data dokumen tidak ditemukan'
+                ],404);
+            }
+
+            if (Storage::disk('public')->exists($data->path_dokumen)) {
+                $url = asset('storage/' . $data->path_dokumen);
+            } else {
+                $url = null;
+            }
+
+            return response()->json([
+                'status' => 200,
+                'message' => "Data dokumen berhasil diambil",
+                'data' => $data,
+                'url' => $url
+            ]);
+        } catch (\Throwable $th) {
+            throw new HttpException(500, $th->getMessage());
+        }
+    }
+
+    public function downloadData($filename){
+        try {
+            
+            if (strpos($filename, '..') !== false) {
+                return response()->json([
+                    'status' => 400,
+                    'message' => 'Path tidak valid'
+                ], 400);
+            }
+    
+            if (!Storage::disk('public')->exists($filename)) {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'File tidak ditemukan'
+                ], 404);
+            }
+    
+            return response()->download(storage_path('app/public/' . $filename));
+    
+        } catch (\Throwable $e) {
+            throw new HttpException(500, $e->getMessage());
+        }
+    }
+    
+
     public function store(createDokumenRequest $request){
         try {
             $data = $request->validated();
 
             if($request->hasFile('file_dokumen')) {
-            $file = $request->file('file_dokumen');
-            $uniqueName = uniqid() . '_' . $file->getClientOriginalName();
-            $path = $file->storePubliclyAs('dokumen', $uniqueName, 'public');
-            $data['path_dokumen'] = $path;
+                $file = $request->file('file_dokumen');
+                $uniqueName = uniqid() . '_' . $file->getClientOriginalName();
+                $path = $file->storePubliclyAs('dokumen', $uniqueName, 'public');
+                $data['path_dokumen'] = $path;
             }
 
             $result = $this->dokumen->createData($data);
             return response()->json([
-            'status' => 200,
+            'status' => 201,
             'message' => 'Dokumen publik berhasil ditambahkan',
             'data' => $result
-            ], 200);
+            ], 201);
         } catch (\Throwable $th) {
             throw new HttpException(500, $th->getMessage());
         }

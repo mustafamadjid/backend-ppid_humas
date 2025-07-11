@@ -9,6 +9,7 @@ use App\Http\Controllers\FormKeberatanController;
 use App\Http\Controllers\FormPengaduanController;
 use App\Http\Controllers\FormPermohonanInformasiController;
 use App\Http\Controllers\GambarSopController;
+use App\Http\Controllers\InfografisServiceController;
 use App\Http\Controllers\JabatanOrganisasiController;
 use App\Http\Controllers\MaklumatPelayananController;
 use App\Http\Controllers\PegawaiServiceController;
@@ -90,14 +91,6 @@ Route::prefix('/ppid')->middleware(['auth:sanctum','throttle:logged-in'])->group
         Route::delete('/{id}', 'destroy');
     });
 
-    // Jabatan Organisasi
-    Route::prefix('/jabatan-organisasi')->controller(JabatanOrganisasiController::class)->group(function(){
-        Route::get('/', 'index');
-        Route::post('/', 'store');
-        Route::put('/{id}', 'update');
-        Route::delete('/{id}', 'destroy');
-    });
-
     // Gambar SOP
     Route::prefix('/gambar-sop')->controller(GambarSopController::class)->group(function(){
         Route::get('/', 'index');
@@ -130,6 +123,14 @@ Route::prefix('/ppid')->middleware(['auth:sanctum','throttle:logged-in'])->group
         Route::delete('/{id}', 'destroy');
     });
 
+     // Jabatan Organisasi
+     Route::prefix('/jabatan-organisasi')->controller(JabatanOrganisasiController::class)->group(function(){
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::put('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
+    });
+
     // Pegawai
     Route::prefix('/pegawai')->controller(PegawaiServiceController::class)->group(function(){
         Route::get('/', 'index');
@@ -137,7 +138,16 @@ Route::prefix('/ppid')->middleware(['auth:sanctum','throttle:logged-in'])->group
         Route::put('/{id}', 'update');
         Route::delete('/{id}', 'destroy');
     });
+
+    // Infografis
+    Route::prefix('/infografis')->controller(InfografisServiceController::class)->group(function(){
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::put('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
+    });
 });
+
 
 // API Publik
 Route::middleware('throttle:global')->group(function () {
@@ -156,6 +166,7 @@ Route::prefix('/formulir')->group(function () {
 // Dokumen berdasarkan tahun
 Route::get('/dokumen/{kategori}/{tahun}',[DokumenPublikController::class,'getDataByTahun']);
 
+
 // Deskripsi halaman dokumen by kategori
 Route::get('/deskripsi-halaman-dokumen/{kategori}',[DeskripsiHalamanDokumenController::class,'getDataByKategori']);
 
@@ -164,6 +175,9 @@ Route::get(('/profil-ppid'),[ProfilPpidController::class,'index']);
 
 // Sematan Aplikasi
 Route::get('/sematan-aplikasi', [SematanAplikasiController::class,'index']);
+
+// Infografis
+Route::get('/infografis', [InfografisServiceController::class,'index']);
 
 });
 
