@@ -5,6 +5,7 @@ use App\Http\Controllers\BannerBerandaController;
 use App\Http\Controllers\DeskripsiHalamanDokumenController;
 use App\Http\Controllers\DokumenPublikController;
 use App\Http\Controllers\DynamicMenuController;
+use App\Http\Controllers\FormContactUsController;
 use App\Http\Controllers\FormKeberatanController;
 use App\Http\Controllers\FormPengaduanController;
 use App\Http\Controllers\FormPermohonanInformasiController;
@@ -54,18 +55,28 @@ Route::prefix('/ppid')->middleware(['auth:sanctum','throttle:logged-in'])->group
         Route::delete('/{id}', 'destroy');
     });
 
-    // Form Keberatan
-    Route::prefix('/keberatan')->controller(FormKeberatanController::class)->group(function () {
+    // Formulir
+    Route::prefix('/formulir')->group(function () {
+        // Form Keberatan
+        Route::prefix('/keberatan')->controller(FormKeberatanController::class)->group(function () {
         Route::get('/', 'index');
         
         Route::delete('/{id}', 'destroy');
     });
 
-    // Form Permohonan Informasi
-    Route::prefix('/permohonan-informasi')->controller(FormPermohonanInformasiController::class)->group(function () {
-        Route::get('/', 'index');
-        Route::delete('/{id}', 'destroy');
+        // Form Permohonan Informasi
+        Route::prefix('/permohonan-informasi')->controller(FormPermohonanInformasiController::class)->group(function () {
+            Route::get('/', 'index');
+            Route::delete('/{id}', 'destroy');
+        });
+
+        // Form Contact Us
+        Route::prefix('/contact-us')->controller(FormContactUsController::class)->group(function () {
+            Route::get('/', 'index');
+            Route::delete('/{id}', 'destroy');
+        });
     });
+    
 
     // Dokumen publik
     Route::prefix('/dokumen-publik')->controller(DokumenPublikController::class)->group(function () {
@@ -161,6 +172,9 @@ Route::prefix('/formulir')->group(function () {
 
     // Form Permohonan Informasi
     Route::post('/permohonan-informasi', [FormPermohonanInformasiController::class,'store']);
+
+    // Form Contact Us
+    Route::post('/contact-us', [FormContactUsController::class,'store']);
 });
 
 // Dokumen berdasarkan tahun

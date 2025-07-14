@@ -4,20 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\JabatanOrganisasiRequest\updateRequest;
 use App\Http\Requests\JabatanOrganisasiRequest\createRequest;
-use App\Models\JabatanOrganisasi;
 use App\Services\DataServiceInterface;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class JabatanOrganisasiController extends Controller
 {
     private DataServiceInterface $service;
-     
+
     public function __construct(DataServiceInterface $service){
         $this->service = $service;
     }
+
     public function index(){
         try {
             $data = $this->service->getData();
@@ -27,12 +24,18 @@ class JabatanOrganisasiController extends Controller
                 'data' => $data
             ],200);
         } catch (\Throwable $e) {
-            throw new HttpException(500,$e->getMessage()); 
+            throw new HttpException(500,$e->getMessage());
         }
     }
+
     public function store(createRequest $request){
         try {
-            $data = $this->service->createData($request->validated());
+            $validated = $request->validated();
+            $user = $request->user();
+            $username = $user ? $user->username : null;
+
+            $data = $this->service->createData($validated, $username);
+
             return response()->json([
                 'status' => 201,
                 'message' => 'Data jabatan organisasi berhasil dibuat',
@@ -42,9 +45,14 @@ class JabatanOrganisasiController extends Controller
             throw new HttpException(500,$e->getMessage());
         }
     }
+
     public function update(updateRequest $request, $id){
         try {
-            $data = $this->service->updateData($id,$request->validated());
+            $validated = $request->validated();
+            $user = $request->user();
+            $username = $user ? $user->username : null;
+
+            $data = $this->service->updateData($id, $validated, $username);
 
             if(!$data){
                 return response()->json([
@@ -62,9 +70,13 @@ class JabatanOrganisasiController extends Controller
             throw new HttpException(500,$e->getMessage());
         }
     }
+
     public function destroy($id){
         try {
-            $data = $this->service->deleteData($id);
+            $user = request()->user();
+            $username = $user ? $user->username : null;
+
+            $data = $this->service->deleteData($id, $username);
 
             if(!$data){
                 return response()->json([

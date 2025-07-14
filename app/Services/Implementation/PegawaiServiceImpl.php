@@ -3,11 +3,12 @@ namespace App\Services\Implementation;
 
 use App\Models\JabatanAssginments;
 use App\Models\Pegawai;
+use App\Models\AktivitasTerbaru;
 use App\Services\DataServiceInterface;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class PegawaiServiceImpl implements DataServiceInterface
 {
@@ -28,7 +29,8 @@ class PegawaiServiceImpl implements DataServiceInterface
             throw $th;
         }
     }
-    public function createData(array $data)
+
+    public function createData(array $data, string $username)
     {
         try {
             $pegawai = Pegawai::create($data);
@@ -44,9 +46,14 @@ class PegawaiServiceImpl implements DataServiceInterface
             Log::info("Data pegawai berhasil ditambahkan", [
                 "time" => now()->toDateTimeString()
             ]);
-
+            // Catat aktivitas
+            AktivitasTerbaru::create([
+                'username' => $username,
+                'jenis_aktivitas' => 'create',
+                'deskripsi_aktivitas' => 'Menambahkan Data Pegawai',
+                'waktu_aktivitas' => Carbon::now()->toDateTimeString()
+            ]);
             return [$pegawai, $jabatanAssign];
-           
 
         } catch (\Throwable $th) {
             Log::error("Data pegawai gagal ditambahkan", [
@@ -57,10 +64,11 @@ class PegawaiServiceImpl implements DataServiceInterface
             throw $th;
         }
     }
-    public function updateData( $id, array $data)
+
+    public function updateData($id, array $data, string $username)
     {
         try{
-            $idPegawai = Pegawai::findOrFail($id);
+            $pegawai = Pegawai::findOrFail($id);
 
             if(isset($data['id_jabatan'])){
                 $jabatanAssign = JabatanAssginments::where('id_pegawai', $id)->first();
@@ -76,11 +84,17 @@ class PegawaiServiceImpl implements DataServiceInterface
                 $jabatanAssign->save();
             }
 
-            $result = $idPegawai->update($data);
+            $result = $pegawai->update($data);
 
             if($result){
                 Log::info("Data pegawai berhasil diupdate", [
                     "time" => now()->toDateTimeString()
+                ]);
+                AktivitasTerbaru::create([
+                    'username' => $username,
+                    'jenis_aktivitas' => 'update',
+                    'deskripsi_aktivitas' => 'Mengubah Data Pegawai',
+                    'waktu_aktivitas' => Carbon::now()->toDateTimeString()
                 ]);
             }else{
                 Log::warning("Data pegawai gagal diupdate (tidak ada perubahan di database)", [
@@ -104,7 +118,8 @@ class PegawaiServiceImpl implements DataServiceInterface
             throw $th;
         }
     }
-    public function deleteData(  $id)
+
+    public function deleteData($id, string $username)
     {
         try {
             $pegawai = Pegawai::findOrFail($id);
@@ -118,6 +133,12 @@ class PegawaiServiceImpl implements DataServiceInterface
             if($result){
                 Log::info("Data pegawai berhasil dihapus", [
                     "time" => now()->toDateTimeString()
+                ]);
+                AktivitasTerbaru::create([
+                    'username' => $username,
+                    'jenis_aktivitas' => 'delete',
+                    'deskripsi_aktivitas' => 'Menghapus Data Pegawai',
+                    'waktu_aktivitas' => Carbon::now()->toDateTimeString()
                 ]);
             }else{
                 Log::warning("Data pegawai gagal dihapus (tidak ada perubahan di database)", [

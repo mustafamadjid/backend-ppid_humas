@@ -2,14 +2,16 @@
 namespace App\Services\Implementation;
 
 use App\Models\DynamicMenu;
+use App\Models\AktivitasTerbaru;
 use App\Services\DataServiceInterface;
-use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
 
 class DynamicMenuImpl implements DataServiceInterface
 {
-    public function createData(array $data){
+    public function createData(array $data, string $username)
+    {
         try {
             $menu = DynamicMenu::create([
                 'judul_menu' => $data['judul_menu'],
@@ -17,6 +19,13 @@ class DynamicMenuImpl implements DataServiceInterface
             ]);
             Log::info("Data menu berhasil ditambahkan", [
                 "time" => now()->toDateTimeString()
+            ]);
+            // Catat aktivitas
+            AktivitasTerbaru::create([
+                'username' => $username,
+                'jenis_aktivitas' => 'create',
+                'deskripsi_aktivitas' => 'Menambahkan Menu Dinamis',
+                'waktu_aktivitas' => Carbon::now()->toDateTimeString()
             ]);
             return $menu;
         } catch (\Throwable $e) {
@@ -47,16 +56,23 @@ class DynamicMenuImpl implements DataServiceInterface
         }
     }
 
-    public function updateData($id, array $data)
+    public function updateData($id, array $data, string $username)
     {
         try {
             $menu = DynamicMenu::findOrFail($id);
-           $result =  $menu->update($data);
+            $result = $menu->update($data);
             Log::info("Data menu berhasil diupdate", [
                 "time" => now()->toDateTimeString()
             ]);
+            // Catat aktivitas
+            AktivitasTerbaru::create([
+                'username' => $username,
+                'jenis_aktivitas' => 'update',
+                'deskripsi_aktivitas' => 'Mengubah Menu Dinamis',
+                'waktu_aktivitas' => Carbon::now()->toDateTimeString()
+            ]);
             return $result;
-        }catch (ModelNotFoundException $e){
+        } catch (ModelNotFoundException $e) {
             Log::error("Data menu gagal diupdate", [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
@@ -73,30 +89,37 @@ class DynamicMenuImpl implements DataServiceInterface
         }
     }
 
-    public function deleteData($id)
-{
-    try {
-        $menu = DynamicMenu::findOrFail($id);
-        $menu->delete();
-        Log::info("Data menu berhasil dihapus", [
-            "time" => now()->toDateTimeString()
-        ]);
-        return true;
-    } catch (ModelNotFoundException $e) {
-        Log::error("Data menu gagal dihapus", [
-            'error' => $e->getMessage(),
-            'trace' => $e->getTraceAsString(),
-            "time" => now()->toDateTimeString()
-        ]);
-        return false;
-    } catch (\Throwable $e) {
-        Log::error("Data menu gagal dihapus", [
-            'error' => $e->getMessage(),
-            'trace' => $e->getTraceAsString(),
-            "time" => now()->toDateTimeString()
-        ]);
-        throw $e;
+    public function deleteData($id, string $username)
+    {
+        try {
+            $menu = DynamicMenu::findOrFail($id);
+            $menu->delete();
+            Log::info("Data menu berhasil dihapus", [
+                "time" => now()->toDateTimeString()
+            ]);
+            // Catat aktivitas
+            AktivitasTerbaru::create([
+                'username' => $username,
+                'jenis_aktivitas' => 'delete',
+                'deskripsi_aktivitas' => 'Menghapus Menu Dinamis',
+                'waktu_aktivitas' => Carbon::now()->toDateTimeString()
+            ]);
+            return true;
+        } catch (ModelNotFoundException $e) {
+            Log::error("Data menu gagal dihapus", [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                "time" => now()->toDateTimeString()
+            ]);
+            return false;
+        } catch (\Throwable $e) {
+            Log::error("Data menu gagal dihapus", [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                "time" => now()->toDateTimeString()
+            ]);
+            throw $e;
+        }
     }
-}
 }
 ?>

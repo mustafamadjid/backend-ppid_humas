@@ -12,10 +12,11 @@ class FormKeberatanServiceImpl implements FormServiceInterface
     public function getForm()
     {
         try {
+            $result = FormKeberatan::all();
             Log::info('Data form keberatan berhasil diambil', [
                 'time' => now()->toDateTimeString()
             ]);
-            return FormKeberatan::all();
+            return $result;
         } catch (\Throwable $th) {
             Log::error("Gagal ambil data form keberatan", [
                 'error' => $th->getMessage(),

@@ -2,7 +2,9 @@
 namespace App\Services\Implementation;
 
 use App\Models\DokumenPublik;
+use App\Models\AktivitasTerbaru;
 use App\Services\DokumenServiceInterface;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
 
@@ -24,42 +26,16 @@ class DokumenPublikImpl implements DokumenServiceInterface
         }
     }
     
-    public function getDataByTahun(int $tahun,string $kategori){
+    public function getDataByTahun(int $tahun, string $kategori){
         try {
-            $data = DokumenPublik::where('kategori_dokumen',$kategori)
-                                -> where('tahun_dokumen',$tahun)
-                                -> firstOrFail();
+            $data = DokumenPublik::where('kategori_dokumen', $kategori)
+                                ->where('tahun_dokumen', $tahun)
+                                ->firstOrFail();
             Log::info("Dokumen publik berhasil diambil", [
                 "time" => now()->toDateTimeString()
             ]);
             return $data;
-        }catch(ModelNotFoundException $e){
-            Log::error("Dokumen publik gagal diambil", [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                "time" => now()->toDateTimeString()
-            ]);
-            return false;
-        }
-         catch (\Throwable $th) {
-            Log::error("Gagal ambil dokumen publik", [
-                'error' => $th->getMessage(),
-                'trace' => $th->getTraceAsString(),
-                "time" => now()->toDateTimeString()
-            ]);
-            throw $th;
-        }
-    }
-
-    public function getDataByKategori(string $kategori){
-        try {
-            $result = DokumenPublik::where('kategori_dokumen',$kategori)->firstOrFail();
-
-            Log::info("Dokumen publik berhasil diambil", [
-                "time" => now()->toDateTimeString()
-            ]);
-            return $result;
-        }catch(ModelNotFoundException $e){
+        } catch(ModelNotFoundException $e) {
             Log::error("Dokumen publik gagal diambil", [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
@@ -76,14 +52,48 @@ class DokumenPublikImpl implements DokumenServiceInterface
         }
     }
 
-    public function createData(array $data){
+    public function getDataByKategori(string $kategori){
+        try {
+            $result = DokumenPublik::where('kategori_dokumen', $kategori)->firstOrFail();
+            Log::info("Dokumen publik berhasil diambil", [
+                "time" => now()->toDateTimeString()
+            ]);
+            return $result;
+        } catch(ModelNotFoundException $e) {
+            Log::error("Dokumen publik gagal diambil", [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                "time" => now()->toDateTimeString()
+            ]);
+            return false;
+        } catch (\Throwable $th) {
+            Log::error("Gagal ambil dokumen publik", [
+                'error' => $th->getMessage(),
+                'trace' => $th->getTraceAsString(),
+                "time" => now()->toDateTimeString()
+            ]);
+            throw $th;
+        }
+    }
+
+    public function createData(array $data, string $username)
+    {
         try {
             $result = DokumenPublik::create($data);
             Log::info("Dokumen publik berhasil ditambahkan", [
                 "time" => now()->toDateTimeString()
             ]);
-            return $result ;
-        }catch (\Throwable $th) {
+
+            // Catat aktivitas terbaru
+            AktivitasTerbaru::create([
+                'username' => $username,
+                'jenis_aktivitas' => 'create',
+                'deskripsi_aktivitas' => 'Menambahkan Dokumen Publik',
+                'waktu_aktivitas' => Carbon::now()->toDateTimeString()
+            ]);
+
+            return $result;
+        } catch (\Throwable $th) {
             Log::error("Gagal tambah dokumen publik", [
                 'error' => $th->getMessage(),
                 'trace' => $th->getTraceAsString(),
@@ -93,7 +103,7 @@ class DokumenPublikImpl implements DokumenServiceInterface
         }
     }
 
-    public function updateData($id, array $data)
+    public function updateData($id, array $data, string $username)
     {
         try {
             $dokumen = DokumenPublik::findOrFail($id);
@@ -103,12 +113,18 @@ class DokumenPublikImpl implements DokumenServiceInterface
                 Log::info("Dokumen publik berhasil diupdate", [
                     "time" => now()->toDateTimeString()
                 ]);
+                // Catat aktivitas terbaru
+                AktivitasTerbaru::create([
+                    'username' => $username,
+                    'jenis_aktivitas' => 'update',
+                    'deskripsi_aktivitas' => 'Mengubah Dokumen Publik',
+                    'waktu_aktivitas' => Carbon::now()->toDateTimeString()
+                ]);
             } else {
                 Log::warning("Dokumen publik gagal diupdate (tidak ada perubahan di database)", [
                     "time" => now()->toDateTimeString()
                 ]);
             }
-    
             return $result;
         } catch (ModelNotFoundException $e) {
             Log::error("Dokumen publik tidak ditemukan saat update", [
@@ -126,24 +142,29 @@ class DokumenPublikImpl implements DokumenServiceInterface
             throw $th;
         }
     }
-    
 
-    public function deleteData($id)
+    public function deleteData($id, string $username)
     {
         try {
             $dokumen = DokumenPublik::findOrFail($id);
             $result = $dokumen->delete();
-    
+
             if ($result) {
                 Log::info("Dokumen publik berhasil dihapus", [
                     "time" => now()->toDateTimeString()
+                ]);
+                // Catat aktivitas terbaru
+                AktivitasTerbaru::create([
+                    'username' => $username,
+                    'jenis_aktivitas' => 'delete',
+                    'deskripsi_aktivitas' => 'Menghapus Dokumen Publik',
+                    'waktu_aktivitas' => Carbon::now()->toDateTimeString()
                 ]);
             } else {
                 Log::warning("Dokumen publik gagal dihapus (tidak ada perubahan di database)", [
                     "time" => now()->toDateTimeString()
                 ]);
             }
-    
             return $result;
         } catch (ModelNotFoundException $e) {
             Log::error("Dokumen publik tidak ditemukan saat hapus", [
@@ -161,7 +182,5 @@ class DokumenPublikImpl implements DokumenServiceInterface
             throw $th;
         }
     }
-    
-
 }
 ?>

@@ -4,13 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\userDataRequest\createUserRequest;
 use App\Http\Requests\userDataRequest\UpdateUserRequest;
-use App\Models\User;
 use App\Services\DataServiceInterface;
-use App\Services\UserDataServiceInterface;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class UserDataServiceController extends Controller
@@ -22,23 +16,27 @@ class UserDataServiceController extends Controller
         $this->userDataService = $userDataService;
     }
 
-    public function store (createUserRequest $request)
+    public function store(createUserRequest $request)
     {
-       try {
-        $user = $this->userDataService->createData($request->validated());
+        try {
+            $validated = $request->validated();
+            $user = $request->user();
+            $username = $user ? $user->username : null;
 
-        return response()->json([
-            'status' => 201,
-            'message' => 'User baru berhasil diregistrasikan',
-            'data' => [
-                'username' => $user->username,
-                'email' => $user->email,
-                'role' => $user->role
-            ]
-        ], 201);
-       } catch (\Throwable $e) {
-        throw new HttpException(500, $e->getMessage());
-       }
+            $createdUser = $this->userDataService->createData($validated, $username);
+
+            return response()->json([
+                'status' => 201,
+                'message' => 'User baru berhasil diregistrasikan',
+                'data' => [
+                    'username' => $createdUser->username,
+                    'email' => $createdUser->email,
+                    'role' => $createdUser->role
+                ]
+            ], 201);
+        } catch (\Throwable $e) {
+            throw new HttpException(500, $e->getMessage());
+        }
     }
 
     public function index()
@@ -59,21 +57,25 @@ class UserDataServiceController extends Controller
     public function update(UpdateUserRequest $request, $id)
     {
         try {
-            $data = $this->userDataService->updateData($id, $request->validated( ));
+            $validated = $request->validated();
+            $user = $request->user();
+            $username = $user ? $user->username : null;
 
-            if(!$data ){
+            $data = $this->userDataService->updateData($id, $validated, $username);
+
+            if (!$data) {
                 return response()->json([
                     'status' => 404,
                     'message' => 'User tidak ditemukan'
                 ], 404);
             }
-    
+
             return response()->json([
                 'status' => 200,
                 'message' => 'Data user berhasil diupdate',
                 'data' => $data
             ]);
-        }catch (\Throwable $e) {
+        } catch (\Throwable $e) {
             throw new HttpException(500, $e->getMessage());
         }
     }
@@ -81,8 +83,10 @@ class UserDataServiceController extends Controller
     public function destroy($id)
     {
         try {
-            
-            $data = $this->userDataService->deleteData($id);
+            $user = request()->user();
+            $username = $user ? $user->username : null;
+
+            $data = $this->userDataService->deleteData($id, $username);
 
             if (!$data) {
                 return response()->json([
@@ -96,7 +100,7 @@ class UserDataServiceController extends Controller
                 'message' => 'Data user berhasil dihapus',
                 'data' => $data
             ]);
-        } catch (\Throwable$e) {
+        } catch (\Throwable $e) {
             throw new HttpException(500, $e->getMessage());
         }
     }

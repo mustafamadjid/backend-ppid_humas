@@ -5,9 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\dokumenDataRequest\createDokumenRequest;
 use App\Http\Requests\dokumenDataRequest\updateDokumenRequest;
 use App\Models\DokumenPublik;
-use App\Services\DataServiceInterface;
 use App\Services\DokumenServiceInterface;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -32,9 +30,9 @@ class DokumenPublikController extends Controller
         }
     }
 
-    public function getDataByTahun($tahun,$kategori){
+    public function getDataByTahun($tahun, $kategori){
         try {
-            $data = $this->dokumen->getDataByTahun($tahun,$kategori);
+            $data = $this->dokumen->getDataByTahun($tahun, $kategori);
 
             if(!$data){
                 return response()->json([
@@ -57,7 +55,7 @@ class DokumenPublikController extends Controller
             ]);
             
         }catch (\Throwable $e) {
-            throw new HttpException(500,$e->getMessage());
+            throw new HttpException(500, $e->getMessage());
         }
     }
 
@@ -91,7 +89,6 @@ class DokumenPublikController extends Controller
 
     public function downloadData($filename){
         try {
-            
             if (strpos($filename, '..') !== false) {
                 return response()->json([
                     'status' => 400,
@@ -116,38 +113,44 @@ class DokumenPublikController extends Controller
 
     public function store(createDokumenRequest $request){
         try {
-            $data = $request->validated();
+            $validated = $request->validated();
+            $user = $request->user();
+            $username = $user ? $user->username : null;
 
             if($request->hasFile('file_dokumen')) {
                 $file = $request->file('file_dokumen');
                 $uniqueName = uniqid() . '_' . $file->getClientOriginalName();
                 $path = $file->storePubliclyAs('dokumen', $uniqueName, 'public');
-                $data['path_dokumen'] = $path;
+                $validated['path_dokumen'] = $path;
             }
 
-            $result = $this->dokumen->createData($data);
+            $result = $this->dokumen->createData($validated, $username);
+
             return response()->json([
-            'status' => 201,
-            'message' => 'Dokumen publik berhasil ditambahkan',
-            'data' => $result
+                'status' => 201,
+                'message' => 'Dokumen publik berhasil ditambahkan',
+                'data' => $result
             ], 201);
         } catch (\Throwable $th) {
             throw new HttpException(500, $th->getMessage());
         }
     }
+
     public function update(updateDokumenRequest $request, $id)
     {
         try {
-            $data = $request->validated();
+            $validated = $request->validated();
+            $user = $request->user();
+            $username = $user ? $user->username : null;
 
             if ($request->hasFile('file_dokumen')) {
                 $file = $request->file('file_dokumen');
                 $uniqueName = uniqid() . '_' . $file->getClientOriginalName();
                 $path = $file->storePubliclyAs('dokumen', $uniqueName, 'public');
-                $data['path_dokumen'] = $path;
+                $validated['path_dokumen'] = $path;
             }
 
-            $updated = $this->dokumen->updateData($id, $data);
+            $updated = $this->dokumen->updateData($id, $validated, $username);
 
             if (!$updated) {
                 return response()->json([
@@ -159,7 +162,7 @@ class DokumenPublikController extends Controller
             return response()->json([
                 'status' => 200,
                 'message' => 'Dokumen publik berhasil diupdate',
-                'data' => $updated // atau bisa hanya $data, sesuai kebutuhan
+                'data' => $updated
             ], 200);
 
         } catch (\Throwable $th) {
@@ -170,7 +173,10 @@ class DokumenPublikController extends Controller
     public function destroy($id)
     {
         try {
-            $deleted = $this->dokumen->deleteData($id);
+            $user = request()->user();
+            $username = $user ? $user->username : null;
+
+            $deleted = $this->dokumen->deleteData($id, $username);
 
             if (!$deleted) {
                 return response()->json([
@@ -188,6 +194,4 @@ class DokumenPublikController extends Controller
             throw new HttpException(500, $th->getMessage());
         }
     }
-
-
 }

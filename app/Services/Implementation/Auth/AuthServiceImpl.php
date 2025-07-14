@@ -1,8 +1,10 @@
 <?php
 namespace App\Services\Implementation\Auth;
 
+use App\Models\AktivitasTerbaru;
 use App\Models\User;
 use App\Services\AuthServices\AuthServiceInterface;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -20,6 +22,12 @@ class AuthServiceImpl implements AuthServiceInterface
                 'email' => $user->email,
                 "time" => now()->toDateTimeString()
             ]);
+            AktivitasTerbaru::create([
+                    'username' => $user->email,
+                    'jenis_aktivitas' => 'login',
+                    'deskripsi_aktivitas' => 'Berhasil Login',
+                    'waktu_aktivitas' => Carbon::now()->toDateTimeString()
+                ]);
                 return $user->createToken($user->email)->plainTextToken;
            }else{
                Log::warning('Percobaan login gagal (password tidak sesuai)',[

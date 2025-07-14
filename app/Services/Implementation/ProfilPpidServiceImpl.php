@@ -2,14 +2,14 @@
 namespace App\Services\Implementation;
 
 use App\Models\ProfilPpid;
+use App\Models\AktivitasTerbaru;
 use App\Services\DataServiceInterface;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class ProfilPpidServiceImpl implements DataServiceInterface
 {
-
     public function getData()
     {
         try {
@@ -29,12 +29,19 @@ class ProfilPpidServiceImpl implements DataServiceInterface
         }
     }
 
-    public function createData(array $data)
+    public function createData(array $data, string $username)
     {
         try {
             $result = ProfilPpid::create($data);
             Log::info("Data profil ppid berhasil ditambahkan", [
                 "time" => now()->toDateTimeString()
+            ]);
+            // Catat aktivitas
+            AktivitasTerbaru::create([
+                'username' => $username,
+                'jenis_aktivitas' => 'create',
+                'deskripsi_aktivitas' => 'Menambahkan Profil PPID',
+                'waktu_aktivitas' => Carbon::now()->toDateTimeString()
             ]);
             return $result;
         } catch (\Throwable $th) {
@@ -47,23 +54,29 @@ class ProfilPpidServiceImpl implements DataServiceInterface
         }
     }
 
-    public function updateData($id, array $data)
+    public function updateData($id, array $data, string $username)
     {
         try{
             $result = ProfilPpid::findOrFail($id);
 
-            $data = $result->update($data);
+            $update = $result->update($data);
 
-            if ($data) {
+            if ($update) {
                 Log::info("Data profil ppid berhasil diupdate", [
                     "time" => now()->toDateTimeString()
+                ]);
+                AktivitasTerbaru::create([
+                    'username' => $username,
+                    'jenis_aktivitas' => 'update',
+                    'deskripsi_aktivitas' => 'Mengubah Profil PPID',
+                    'waktu_aktivitas' => Carbon::now()->toDateTimeString()
                 ]);
             } else {
                 Log::warning("Data profil ppid gagal diupdate (tidak ada perubahan di database)", [
                     "time" => now()->toDateTimeString()
                 ]);
             }
-            return $data;
+            return $update;
         }catch (ModelNotFoundException $e) {
             Log::error("Data profil ppid gagal diupdate", [
                 'error' => $e->getMessage(),
@@ -81,14 +94,26 @@ class ProfilPpidServiceImpl implements DataServiceInterface
         }
     }
 
-    public function deleteData($id)
+    public function deleteData($id, string $username)
     {
         try {
             $data = ProfilPpid::findOrFail($id);
             $result = $data->delete();
-            Log::info("Data profil ppid berhasil dihapus", [
-                "time" => now()->toDateTimeString()
-            ]);
+            if ($result) {
+                Log::info("Data profil ppid berhasil dihapus", [
+                    "time" => now()->toDateTimeString()
+                ]);
+                AktivitasTerbaru::create([
+                    'username' => $username,
+                    'jenis_aktivitas' => 'delete',
+                    'deskripsi_aktivitas' => 'Menghapus Profil PPID',
+                    'waktu_aktivitas' => Carbon::now()->toDateTimeString()
+                ]);
+            } else {
+                Log::warning("Data profil ppid gagal dihapus (tidak ada perubahan di database)", [
+                    "time" => now()->toDateTimeString()
+                ]);
+            }
             return $result;
         }catch (ModelNotFoundException $e) {
             Log::error("Data profil ppid gagal dihapus", [
@@ -107,5 +132,4 @@ class ProfilPpidServiceImpl implements DataServiceInterface
         }
     }
 }
-
 ?>

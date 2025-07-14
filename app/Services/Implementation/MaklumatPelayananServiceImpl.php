@@ -2,10 +2,11 @@
 namespace App\Services\Implementation;
 
 use App\Models\MaklumatPelayanan;
+use App\Models\AktivitasTerbaru;
 use App\Services\DataServiceInterface;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class MaklumatPelayananServiceImpl implements DataServiceInterface
 {
@@ -28,12 +29,19 @@ class MaklumatPelayananServiceImpl implements DataServiceInterface
         }
     }
 
-    public function createData(array $data)
+    public function createData(array $data, string $username)
     {
         try {
             $result = MaklumatPelayanan::create($data);
             Log::info("Data maklumat pelayanan berhasil ditambahkan", [
                 "time" => now()->toDateTimeString()
+            ]);
+            // Catat aktivitas
+            AktivitasTerbaru::create([
+                'username' => $username,
+                'jenis_aktivitas' => 'create',
+                'deskripsi_aktivitas' => 'Menambahkan Maklumat Pelayanan',
+                'waktu_aktivitas' => Carbon::now()->toDateTimeString()
             ]);
             return $result;
         } catch (\Throwable $th) {
@@ -46,23 +54,30 @@ class MaklumatPelayananServiceImpl implements DataServiceInterface
         }
     }
 
-    public function updateData($id, array $data)
+    public function updateData($id, array $data, string $username)
     {
         try {
             $result = MaklumatPelayanan::findOrFail($id);
 
-            $data = $result->update($data);
-            if ($data) {
+            $update = $result->update($data);
+            if ($update) {
                 Log::info("Data maklumat pelayanan berhasil diupdate", [
                     "time" => now()->toDateTimeString()
+                ]);
+                // Catat aktivitas
+                AktivitasTerbaru::create([
+                    'username' => $username,
+                    'jenis_aktivitas' => 'update',
+                    'deskripsi_aktivitas' => 'Mengubah Maklumat Pelayanan',
+                    'waktu_aktivitas' => Carbon::now()->toDateTimeString()
                 ]);
             } else {
                 Log::warning("Data maklumat pelayanan gagal diupdate (tidak ada perubahan di database)", [
                     "time" => now()->toDateTimeString()
                 ]);
             }
-            return $result;
-        }catch (ModelNotFoundException $e){
+            return $update;
+        } catch (ModelNotFoundException $e) {
             Log::error("Data maklumat pelayanan gagal diupdate", [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
@@ -79,7 +94,7 @@ class MaklumatPelayananServiceImpl implements DataServiceInterface
         }
     }
 
-    public function deleteData( $id)
+    public function deleteData($id, string $username)
     {
         try {
             $data = MaklumatPelayanan::findOrFail($id);
@@ -87,6 +102,13 @@ class MaklumatPelayananServiceImpl implements DataServiceInterface
             if ($result) {
                 Log::info("Data maklumat pelayanan berhasil dihapus", [
                     "time" => now()->toDateTimeString()
+                ]);
+                // Catat aktivitas
+                AktivitasTerbaru::create([
+                    'username' => $username,
+                    'jenis_aktivitas' => 'delete',
+                    'deskripsi_aktivitas' => 'Menghapus Maklumat Pelayanan',
+                    'waktu_aktivitas' => Carbon::now()->toDateTimeString()
                 ]);
             } else {
                 Log::warning("Data maklumat pelayanan gagal dihapus (tidak ada perubahan di database)", [

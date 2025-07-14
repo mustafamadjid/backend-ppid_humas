@@ -23,7 +23,7 @@ use App\Services\Implementation\JabatanOrganisasiServiceImpl;
 use App\Services\Implementation\MaklumatPelayananServiceImpl;
 use App\Services\Implementation\PegawaiServiceImpl;
 use App\Services\Implementation\ProfilPpidServiceImpl;
-use App\Services\Implementation\SematanAplikasiImpl;kkjkj
+use App\Services\Implementation\SematanAplikasiImpl;
 use App\Services\Implementation\UserDataServiceImpl;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
@@ -90,10 +90,7 @@ class DataServiceProvider extends ServiceProvider implements DeferrableProvider
         ->needs(DataServiceInterface::class)
         ->give(InfografisServiceImpl::class);
 
-        // Binding aktivitas terbaru
-        $this->app->when(AktivitasTerbaruController::class)
-        ->needs(DataServiceInterface::class)
-        ->give(AktivitasTerbaruImpl::class);
+       
 
     }
 

@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\InfografisRequest\createRequest;
 use App\Http\Requests\InfografisRequest\updateRequest;
 use App\Services\DataServiceInterface;
-use Dflydev\DotAccessData\Data;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class InfografisServiceController extends Controller
@@ -34,42 +32,43 @@ class InfografisServiceController extends Controller
 
     public function store(createRequest $request){
         try {
-           $data = $request->validated();
-
-           if($request->hasFile('file_gambar')) {
-            $file = $request->file('file_gambar');
-
-            $uniqueName = uniqid() . '_' . $file->getClientOriginalName();
-            $path = $file->storePubliclyAs('infografis', $uniqueName, 'public');
-
-            $data['path_infografis'] = $path;
-           }
-
-           $result = $this->service->createData($data);
-           return response()->json([
-               'status' => 201,
-               'message' => 'Data infografis berhasil ditambahkan',
-               'data' => $result
-           ],201);
-        } catch (\Throwable $th) {
-            throw new HttpException(500,$th->getMessage());
-        }
-    }
-
-    public function update(updateRequest $request,$id)
-    {
-        try {
-            $data = $request->validated();
+            $validated = $request->validated();
+            $user = $request->user();
+            $username = $user ? $user->username : null;
 
             if($request->hasFile('file_gambar')) {
                 $file = $request->file('file_gambar');
                 $uniqueName = uniqid() . '_' . $file->getClientOriginalName();
                 $path = $file->storePubliclyAs('infografis', $uniqueName, 'public');
-
-                $data['path_infografis'] = $path;
+                $validated['path_infografis'] = $path;
             }
 
-            $result = $this->service->updateData($id,$data);
+            $result = $this->service->createData($validated, $username);
+            return response()->json([
+                'status' => 201,
+                'message' => 'Data infografis berhasil ditambahkan',
+                'data' => $result
+            ],201);
+        } catch (\Throwable $th) {
+            throw new HttpException(500,$th->getMessage());
+        }
+    }
+
+    public function update(updateRequest $request, $id)
+    {
+        try {
+            $validated = $request->validated();
+            $user = $request->user();
+            $username = $user ? $user->username : null;
+
+            if($request->hasFile('file_gambar')) {
+                $file = $request->file('file_gambar');
+                $uniqueName = uniqid() . '_' . $file->getClientOriginalName();
+                $path = $file->storePubliclyAs('infografis', $uniqueName, 'public');
+                $validated['path_infografis'] = $path;
+            }
+
+            $result = $this->service->updateData($id, $validated, $username);
 
             if(!$result) {
                 return response()->json([
@@ -91,7 +90,10 @@ class InfografisServiceController extends Controller
     public function destroy($id)
     {
         try {
-            $result = $this->service->deleteData($id);
+            $user = request()->user();
+            $username = $user ? $user->username : null;
+
+            $result = $this->service->deleteData($id, $username);
 
             if (!$result) {
                 return response()->json([
@@ -108,5 +110,4 @@ class InfografisServiceController extends Controller
             throw new HttpException(500,$th->getMessage());
         }
     }
-
 }

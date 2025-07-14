@@ -2,9 +2,11 @@
 namespace App\Services\Implementation;
 
 use App\Models\Infografis;
+use App\Models\AktivitasTerbaru;
 use App\Services\DataServiceInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class InfografisServiceImpl implements DataServiceInterface
 {
@@ -24,12 +26,20 @@ class InfografisServiceImpl implements DataServiceInterface
             throw $th;
         }
     }
-    public function createData(array $data)
+
+    public function createData(array $data, string $username)
     {
         try {
             $result = Infografis::create($data);
             Log::info("Data infografis berhasil ditambahkan", [
                 "time" => now()->toDateTimeString()
+            ]);
+            // Catat aktivitas
+            AktivitasTerbaru::create([
+                'username' => $username,
+                'jenis_aktivitas' => 'create',
+                'deskripsi_aktivitas' => 'Menambahkan Infografis',
+                'waktu_aktivitas' => Carbon::now()->toDateTimeString()
             ]);
             return $result;
         } catch (\Throwable $th) {
@@ -41,28 +51,36 @@ class InfografisServiceImpl implements DataServiceInterface
             throw $th;
         }
     }
-    public function updateData( $id, array $data)
+
+    public function updateData($id, array $data, string $username)
     {
         try {
             $result = Infografis::findOrFail($id);
-            $data = $result->update($data);
-            if ($data) {
+            $update = $result->update($data);
+            if ($update) {
                 Log::info("Data infografis berhasil diupdate", [
                     "time" => now()->toDateTimeString()
+                ]);
+                // Catat aktivitas
+                AktivitasTerbaru::create([
+                    'username' => $username,
+                    'jenis_aktivitas' => 'update',
+                    'deskripsi_aktivitas' => 'Mengubah Infografis',
+                    'waktu_aktivitas' => Carbon::now()->toDateTimeString()
                 ]);
             } else {
                 Log::warning("Data infografis gagal diupdate (tidak ada perubahan di database)", [
                     "time" => now()->toDateTimeString()
                 ]);
             }
-            return $data;
+            return $update;
         } catch (ModelNotFoundException $th) {
             Log::error("Data infografis tidak ditemukan", [
                 "time" => now()->toDateTimeString(),
                 "error" => $th->getMessage()
             ]);
             return false;
-        }catch (\Throwable $th) {
+        } catch (\Throwable $th) {
             Log::error("Data infografis gagal diupdate", [
                 'error' => $th->getMessage(),
                 'trace' => $th->getTraceAsString(),
@@ -71,22 +89,36 @@ class InfografisServiceImpl implements DataServiceInterface
             throw $th;
         }
     }
-    public function deleteData(  $id)
+
+    public function deleteData($id, string $username)
     {
         try {
             $result = Infografis::findOrFail($id);
-            $result->delete();
-            Log::info("Data infografis berhasil dihapus", [
-                "time" => now()->toDateTimeString()
-            ]);
-            return true;
+            $delete = $result->delete();
+            if ($delete) {
+                Log::info("Data infografis berhasil dihapus", [
+                    "time" => now()->toDateTimeString()
+                ]);
+                // Catat aktivitas
+                AktivitasTerbaru::create([
+                    'username' => $username,
+                    'jenis_aktivitas' => 'delete',
+                    'deskripsi_aktivitas' => 'Menghapus Infografis',
+                    'waktu_aktivitas' => Carbon::now()->toDateTimeString()
+                ]);
+            } else {
+                Log::warning("Data infografis gagal dihapus (tidak ada perubahan di database)", [
+                    "time" => now()->toDateTimeString()
+                ]);
+            }
+            return $delete;
         } catch (ModelNotFoundException $th) {
             Log::error("Data infografis tidak ditemukan", [
                 "time" => now()->toDateTimeString(),
                 "error" => $th->getMessage()
             ]);
             return false;
-        }catch (\Throwable $th) {
+        } catch (\Throwable $th) {
             Log::error("Data infografis gagal dihapus", [
                 'error' => $th->getMessage(),
                 'trace' => $th->getTraceAsString(),

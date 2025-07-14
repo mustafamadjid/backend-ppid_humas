@@ -6,7 +6,6 @@ use App\Http\Requests\menuDataRequest\createMenuRequest;
 use App\Http\Requests\menuDataRequest\updateMenuRequest;
 use App\Models\DynamicMenu;
 use App\Services\DataServiceInterface;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class DynamicMenuController extends Controller
@@ -16,11 +15,14 @@ class DynamicMenuController extends Controller
     {
         $this->dynamicMenuService = $dynamicMenuService;
     }   
+    
     public function store(createMenuRequest $request) {
         try {
-          
+            $validated = $request->validated();
+            $user = $request->user();
+            $username = $user ? $user->username : null;
 
-            $data = $this->dynamicMenuService->createData($request->validated());
+            $data = $this->dynamicMenuService->createData($validated, $username);
 
             return response()->json([
                 'status' => 200,
@@ -51,7 +53,11 @@ class DynamicMenuController extends Controller
     public function update(updateMenuRequest $request, $id)
     {
         try {
-            $data = $this->dynamicMenuService->updateData($id, $request->validated());
+            $validated = $request->validated();
+            $user = $request->user();
+            $username = $user ? $user->username : null;
+
+            $data = $this->dynamicMenuService->updateData($id, $validated, $username);
 
             if (!$data) {
                 return response()->json([
@@ -73,7 +79,10 @@ class DynamicMenuController extends Controller
     public function destroy($id)
     {
         try {
-            $result= $this->dynamicMenuService->deleteData($id);
+            $user = request()->user();
+            $username = $user ? $user->username : null;
+
+            $result = $this->dynamicMenuService->deleteData($id, $username);
 
             if (!$result) {
                 return response()->json([

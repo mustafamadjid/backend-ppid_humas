@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PegawaiRequest\createRequest;
 use App\Http\Requests\PegawaiRequest\updateRequest;
 use App\Services\DataServiceInterface;
-use Dflydev\DotAccessData\Data;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class PegawaiServiceController extends Controller
@@ -30,19 +28,22 @@ class PegawaiServiceController extends Controller
             throw new HttpException(500,$th->getMessage());
         }
     }
+    
     public function store(createRequest $request)
     {
         try {
-            $data = $request->validated();
+            $validated = $request->validated();
+            $user = $request->user();
+            $username = $user ? $user->username : null;
 
             if($request->hasFile('file_gambar')) {
                 $file = $request->file('file_gambar');
                 $uniqueName = uniqid() . '_' . $file->getClientOriginalName();
                 $path = $file->storePubliclyAs('foto_pegawai', $uniqueName, 'public');
-                $data['path_foto_pegawai'] = $path;
+                $validated['path_foto_pegawai'] = $path;
             }
 
-            $result = $this->service->createData($data);
+            $result = $this->service->createData($validated, $username);
             return response()->json([
                 'status' => 201,
                 'message' => 'Data pegawai berhasil ditambahkan',
@@ -52,19 +53,22 @@ class PegawaiServiceController extends Controller
             throw new HttpException(500,$th->getMessage());
         }
     }
+
     public function update(updateRequest $request, $id)
     {
         try {
-            $data = $request->validated();
+            $validated = $request->validated();
+            $user = $request->user();
+            $username = $user ? $user->username : null;
 
             if($request->hasFile('file_gambar')) {
                 $file = $request->file('file_gambar');
                 $uniqueName = uniqid() . '_' . $file->getClientOriginalName();
                 $path = $file->storePubliclyAs('foto_pegawai', $uniqueName, 'public');
-                $data['path_foto_pegawai'] = $path;
+                $validated['path_foto_pegawai'] = $path;
             }
 
-            $result = $this->service->updateData($id,$data);
+            $result = $this->service->updateData($id, $validated, $username);
 
             if(!$result) {
                 return response()->json([
@@ -82,10 +86,14 @@ class PegawaiServiceController extends Controller
            throw new HttpException(500,$th->getMessage());
         }
     }
+
     public function destroy($id)
     {
         try {
-            $result = $this->service->deleteData($id);
+            $user = request()->user();
+            $username = $user ? $user->username : null;
+
+            $result = $this->service->deleteData($id, $username);
             if (!$result) {
                 return response()->json([
                     'status' => 404,

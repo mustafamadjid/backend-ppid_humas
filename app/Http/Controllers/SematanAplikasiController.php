@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SematanAplikasiRequest\createRequest;
 use App\Http\Requests\SematanAplikasiRequest\updateRequest;
 use App\Services\DataServiceInterface;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class SematanAplikasiController extends Controller
@@ -18,49 +17,53 @@ class SematanAplikasiController extends Controller
 
     public function index()
     {
-        try{
+        try {
             $data = $this->service->getData();
 
             return response()->json([
                 'status' => 200,
                 'message' => 'Data semua sematan aplikasi berhasil diambil',
                 'data' => $data
-            ],200);
+            ], 200);
 
-        }catch(\Throwable $th){
-            throw new HttpException(500,$th->getMessage());
+        } catch(\Throwable $th){
+            throw new HttpException(500, $th->getMessage());
         }
     }
 
     public function store(createRequest $request)
     {
         try {
-        $data = $request->validated();
+            $validated = $request->validated();
+            $user = $request->user();
+            $username = $user ? $user->username : null;
 
-        $result = $this->service->createData($data);
+            $result = $this->service->createData($validated, $username);
 
-        return response()->json([
-            'status' => 200,
-            'message' => 'Data sematan aplikasi berhasil ditambahkan',
-            'data' => $result
-        ],200);
+            return response()->json([
+                'status' => 200,
+                'message' => 'Data sematan aplikasi berhasil ditambahkan',
+                'data' => $result
+            ], 200);
         } catch (\Throwable $th) {
-            throw new HttpException(500,$th->getMessage());
+            throw new HttpException(500, $th->getMessage());
         }
     }
 
     public function update(updateRequest $request, $id)
     {
         try {
-            $data = $request->validated();
+            $validated = $request->validated();
+            $user = $request->user();
+            $username = $user ? $user->username : null;
 
-            $result = $this->service->updateData($id,$data);
+            $result = $this->service->updateData($id, $validated, $username);
 
             if(!$result){
                 return response()->json([
                     'status' => 404,
                     'message' => 'Data sematan aplikasi tidak ditemukan'
-                ],404);
+                ], 404);
             }
 
             return response()->json([
@@ -69,14 +72,17 @@ class SematanAplikasiController extends Controller
                 'data' => $result
             ]);
         } catch (\Throwable $th) {
-            throw new HttpException(500,$th->getMessage());
+            throw new HttpException(500, $th->getMessage());
         }
     }
 
     public function destroy($id)
     {
         try {
-            $result = $this->service->deleteData($id);
+            $user = request()->user();
+            $username = $user ? $user->username : null;
+
+            $result = $this->service->deleteData($id, $username);
 
             if (!$result) {
                 return response()->json([
@@ -90,7 +96,7 @@ class SematanAplikasiController extends Controller
                 'message' => 'Data sematan aplikasi berhasil dihapus'
             ]);
         } catch (\Throwable $th) {
-            throw new HttpException(500,$th->getMessage());
+            throw new HttpException(500, $th->getMessage());
         }
     }
 }
