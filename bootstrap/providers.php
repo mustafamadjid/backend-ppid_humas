@@ -1,6 +1,7 @@
 <?php
 
 return [
+    App\Providers\AktivitasTerbaruProvider::class,
     App\Providers\AppServiceProvider::class,
     App\Providers\AuthProvider\AuthServiceProvider::class,
     App\Providers\DashboardServiceProvider::class,

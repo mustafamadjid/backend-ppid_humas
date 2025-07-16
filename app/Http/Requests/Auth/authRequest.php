@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests\Auth;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Log;
 
 class authRequest extends FormRequest
 {
@@ -32,5 +35,18 @@ class authRequest extends FormRequest
                 'min:6',
             ],
         ];
+    }
+     public function failedValidation(Validator $validator){
+        Log::error('Validasi Gagal', [
+            
+            'errors' => $validator->errors()->toArray(),
+            'ip' => $this->ip(),
+        ]);
+
+        throw new HttpResponseException(response()->json([
+            'status' => 422,
+            'message' => 'Validation errors',
+            'data' => $validator->errors()
+        ]));
     }
 }

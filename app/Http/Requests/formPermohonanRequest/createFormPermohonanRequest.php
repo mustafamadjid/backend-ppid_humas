@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests\formPermohonanRequest;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Log;
 
 class createFormPermohonanRequest extends FormRequest
 {
@@ -106,5 +109,22 @@ class createFormPermohonanRequest extends FormRequest
                 'string',
             ],
         ];
+    }
+
+    public function failedValidation(Validator $validator){
+        // Log semua input dan error validasinya
+        Log::error('Validasi Form Permohonan Gagal', [
+            
+            'errors' => $validator->errors()->toArray(),
+            'ip' => $this->ip(), // bisa juga user() jika pakai auth
+        ]);
+
+        throw new HttpResponseException(response()->json([
+            'status' => 422,
+            'message' => 'Validation errors',
+            'data' => $validator->errors()
+        ]));
+
+        
     }
 }

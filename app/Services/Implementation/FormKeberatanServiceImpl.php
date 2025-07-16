@@ -49,9 +49,6 @@ class FormKeberatanServiceImpl implements FormServiceInterface
         try {
             $form = FormKeberatan::findOrFail($id);
 
-            if ($form->path_file_bukti && Storage::disk('public')->exists($form->path_file_bukti)) {
-                Storage::disk('public')->delete($form->path_file_bukti);
-            }
             $result = $form->delete();
             
             if($result){

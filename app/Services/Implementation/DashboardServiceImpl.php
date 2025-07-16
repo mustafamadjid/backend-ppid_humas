@@ -1,6 +1,7 @@
 <?php
 namespace App\Services\Implementation;
 
+use App\Models\DokumenPublik;
 use App\Models\FormKeberatan;
 use App\Models\FormPengaduan;
 use App\Models\FormPermohonanInformasi;
@@ -10,6 +11,22 @@ use Illuminate\Support\Facades\Log;
 
 class DashboardServiceImpl implements DashboardServiceInterface
 {
+    public function countDokumen(){
+        try {
+            $count = DokumenPublik::count();
+            Log::info("Total data dokumen berhasil diambil", [
+                "count" => $count,
+                "time" => now()->toDateTimeString()
+            ]);
+            return $count;
+        } catch (\Throwable $th) {
+            Log::error("Gagal ambil total data dokumen", [
+                'error' => $th->getMessage(),
+                'trace' => $th->getTraceAsString(),
+                "time" => now()->toDateTimeString()
+            ]);
+        }
+    }
     public function countFormPengaduan(){
         try{
             $count = FormPengaduan::count();

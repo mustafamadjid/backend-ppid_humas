@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests\BannerBerandaRequest;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Log;
 
 class updateRequest extends FormRequest
 {
@@ -41,5 +44,18 @@ class updateRequest extends FormRequest
                 'max:1'
             ]
         ];
+    }
+    public function failedValidation(Validator $validator){
+        Log::error('Validasi Gagal', [
+            
+            'errors' => $validator->errors()->toArray(),
+            'ip' => $this->ip(),
+        ]);
+
+        throw new HttpResponseException(response()->json([
+            'status' => 422,
+            'message' => 'Validation errors',
+            'data' => $validator->errors()
+        ]));
     }
 }

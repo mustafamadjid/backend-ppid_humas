@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests\userDataRequest;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class UpdateUserRequest extends FormRequest
@@ -47,5 +50,17 @@ class UpdateUserRequest extends FormRequest
                 'max:255',
             ],
         ];
+    }
+    public function failedValidation(Validator $validator){
+        Log::error('Validasi Gagal', [
+            'errors' => $validator->errors()->toArray(),
+            'ip' => $this->ip(),
+        ]);
+
+        throw new HttpResponseException(response()->json([
+            'status' => 422,
+            'message' => 'Validation errors',
+            'data' => $validator->errors()
+        ]));
     }
 }

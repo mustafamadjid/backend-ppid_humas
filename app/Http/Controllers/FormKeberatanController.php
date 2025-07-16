@@ -30,16 +30,9 @@ class FormKeberatanController extends Controller
 
     public function store(createFormKeberatanRequest $request){
         try {
-            $file = $request->file('file_bukti');
-            $uniqueName = uniqid() . '_' . $file->getClientOriginalName();
-            $path = $file->storePubliclyAs('bukti_pengajuan_keberatan', $uniqueName, 'public');
+            $validated = $request->validated();
 
-            $data = array_merge(
-                $request->validated(),
-                ['path_file_bukti' => $path]
-            );
-
-            $this->form->createForm($data);
+            $data = $this->form->createForm($validated);
             
             return response()->json([
                 'status' => 200,

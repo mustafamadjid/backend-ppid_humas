@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests\menuDataRequest;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Log;
 
 class updateMenuRequest extends FormRequest
 {
@@ -33,5 +36,18 @@ class updateMenuRequest extends FormRequest
                     'url'
                 ]
         ];
+    }
+    public function failedValidation(Validator $validator){
+        Log::error('Validasi Gagal', [
+           
+            'errors' => $validator->errors()->toArray(),
+            'ip' => $this->ip(),
+        ]);
+
+        throw new HttpResponseException(response()->json([
+            'status' => 422,
+            'message' => 'Validation errors',
+            'data' => $validator->errors()
+        ]));
     }
 }

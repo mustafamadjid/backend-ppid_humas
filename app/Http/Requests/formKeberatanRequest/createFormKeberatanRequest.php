@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests\formKeberatanRequest;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Log;
 
 class createFormKeberatanRequest extends FormRequest
 {
@@ -60,12 +63,20 @@ class createFormKeberatanRequest extends FormRequest
                     'required',
                     'string',
                 ],
-                'file_bukti' => [
-                    'required',
-                    'file',
-                    'mimes:jpg,jpeg,png,pdf',
-                    'max:20480'
-                ]
         ];
+    }
+    public function failedValidation(Validator $validator){
+        // Log semua input dan error validasinya
+        Log::error('Validasi Form Gagal', [
+            
+            'errors' => $validator->errors()->toArray(),
+            'ip' => $this->ip(),
+        ]);
+
+        throw new HttpResponseException(response()->json([
+            'status' => 422,
+            'message' => 'Validation errors',
+            'data' => $validator->errors()
+        ]));
     }
 }

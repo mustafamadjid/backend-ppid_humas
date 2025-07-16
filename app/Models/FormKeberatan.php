@@ -20,6 +20,5 @@ class FormKeberatan extends Model
         'pekerjaan_pemohon',
         'tujuan_pengajuan',
         'alasan_pengajuan',
-        'path_file_bukti',
     ];
 }

@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\AktivitasTerbaruController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\BannerBerandaController;
+use App\Http\Controllers\DashboardServiceController;
 use App\Http\Controllers\DeskripsiHalamanDokumenController;
 use App\Http\Controllers\DokumenPublikController;
 use App\Http\Controllers\DynamicMenuController;
@@ -157,6 +159,18 @@ Route::prefix('/ppid')->middleware(['auth:sanctum','throttle:logged-in'])->group
         Route::put('/{id}', 'update');
         Route::delete('/{id}', 'destroy');
     });
+
+    // Aktivitas Terbaru
+    Route::get('/aktivitas-terbaru', [AktivitasTerbaruController::class,'index']);
+
+    // Dashboard Admin
+    Route::prefix('/dashboard')->controller(DashboardServiceController::class)->group(function(){
+        Route::get('/total-dokumen', 'countDokumen');
+        Route::get('/total-form-pengaduan', 'countFormPengaduan');
+        Route::get('/total-form-pengajuan-keberatan', 'countFormPengajuanKeberatan');
+        Route::get('/total-form-permohonan', 'countFormPermohonan');
+        Route::get('/total-admin', 'countAdmin');
+    });
 });
 
 
@@ -168,7 +182,7 @@ Route::prefix('/formulir')->group(function () {
     Route::post('/pengaduan', [FormPengaduanController::class,'store']);
 
     // Form Keberatan
-    Route::post('/keberatan', [FormKeberatanController::class,'store']);
+    Route::post('/pengajuan-keberatan', [FormKeberatanController::class,'store']);
 
     // Form Permohonan Informasi
     Route::post('/permohonan-informasi', [FormPermohonanInformasiController::class,'store']);

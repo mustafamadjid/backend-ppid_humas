@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests\formPengaduanRequest;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Log;
 
 class createFormPengaduanRequest extends FormRequest
 {
@@ -64,5 +67,19 @@ class createFormPengaduanRequest extends FormRequest
                 'max:20480'
             ]
         ];
+    }
+    public function failedValidation(Validator $validator){
+        // Log semua input dan error validasinya
+        Log::error('Validasi Form Gagal', [
+            
+            'errors' => $validator->errors()->toArray(),
+            'ip' => $this->ip(),
+        ]);
+
+        throw new HttpResponseException(response()->json([
+            'status' => 422,
+            'message' => 'Validation errors',
+            'data' => $validator->errors()
+        ]));
     }
 }

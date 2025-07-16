@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests\GambarSopRequest;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Log;
 
 class createRequest extends FormRequest
 {
@@ -35,5 +38,18 @@ class createRequest extends FormRequest
                 'max:5'
             ],
         ];
+    }
+    public function failedValidation(Validator $validator){
+        Log::error('Validasi Gagal', [
+           
+            'errors' => $validator->errors()->toArray(),
+            'ip' => $this->ip(),
+        ]);
+
+        throw new HttpResponseException(response()->json([
+            'status' => 422,
+            'message' => 'Validation errors',
+            'data' => $validator->errors()
+        ]));
     }
 }

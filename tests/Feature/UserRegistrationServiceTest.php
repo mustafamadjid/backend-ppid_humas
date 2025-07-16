@@ -37,7 +37,7 @@ class UserRegistrationServiceTest extends TestCase
             'role' => 'superadmin'
         ];
 
-        $this->post('/register', $data)
+        $this->post('ppid/user/register', $data)
             ->assertStatus(201)
             ->assertJson([
                 'status' => 201,
