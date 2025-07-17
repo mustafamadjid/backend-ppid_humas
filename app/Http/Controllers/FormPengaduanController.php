@@ -7,6 +7,7 @@ use App\Http\Requests\formPengaduanRequest\updateRequest;
 use App\Models\FormPengaduan;
 use App\Services\FormServiceInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class FormPengaduanController extends Controller
@@ -87,7 +88,9 @@ class FormPengaduanController extends Controller
 
     public function destroy( $id){
         try {
-           $result = $this->form->deleteForm($id);
+            $user = Auth::user();
+            $username = $user ? $user->username : null;
+           $result = $this->form->deleteForm($id, $username);
 
             if (!$result) {
                 return response()->json([

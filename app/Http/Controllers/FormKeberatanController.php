@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\formKeberatanRequest\createFormKeberatanRequest;
 use App\Http\Requests\FormKeberatanRequest\updateRequest;
 use App\Services\FormServiceInterface;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class FormKeberatanController extends Controller
@@ -73,7 +74,9 @@ class FormKeberatanController extends Controller
 
     public function destroy($id){
         try {
-           $result = $this->form->deleteForm($id);
+            $user = Auth::user();
+            $username = $user ? $user->username : null;
+           $result = $this->form->deleteForm($id, $username);
 
             if (!$result) {
                 return response()->json([

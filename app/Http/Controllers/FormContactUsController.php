@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\FormContactUsRequest\createRequest;
 use App\Http\Requests\FormContactUsRequest\updateRequest;
 use App\Services\FormServiceInterface;
+use GuzzleHttp\Psr7\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class FormContactUsController extends Controller
@@ -73,10 +75,13 @@ class FormContactUsController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy( $id)
     {
         try {
-            $result = $this->service->deleteForm($id);
+            $user = Auth::user();
+            $username = $user ? $user->username : null;
+
+            $result = $this->service->deleteForm($id, $username);
 
             if (!$result) {
                 return response()->json([

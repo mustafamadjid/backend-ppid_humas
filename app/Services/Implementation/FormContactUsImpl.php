@@ -61,7 +61,7 @@ class FormContactUsImpl implements FormServiceInterface
                 AktivitasTerbaru::create([
                     'username' => $username,
                     'jenis_aktivitas' => 'update',
-                    'deskripsi_aktivitas' => 'Mengubah status',
+                    'deskripsi_aktivitas' => 'Mengubah status data form contact us ('.$data["status"].")",
                     'waktu_aktivitas' => Carbon::now()->toDateTimeString()
                 ]);
                 
@@ -91,7 +91,7 @@ class FormContactUsImpl implements FormServiceInterface
         }
     }
 
-    public function deleteForm($id)
+    public function deleteForm($id,string $username)
     {
         try {
             $form = FormContactUs::findOrFail($id);
@@ -99,6 +99,14 @@ class FormContactUsImpl implements FormServiceInterface
             Log::info("Data form contact us berhasil dihapus", [
                 "time" => now()->toDateTimeString()
             ]);
+
+            // Catat aktivitas
+                AktivitasTerbaru::create([
+                    'username' => $username,
+                    'jenis_aktivitas' => 'delete',
+                    'deskripsi_aktivitas' => 'Menghapus data form contact us',
+                    'waktu_aktivitas' => Carbon::now()->toDateTimeString()
+                ]);
             return true;
         }catch (ModelNotFoundException $e){
             Log::error("Data form contact us tidak ditemukan untuk dihapus", [

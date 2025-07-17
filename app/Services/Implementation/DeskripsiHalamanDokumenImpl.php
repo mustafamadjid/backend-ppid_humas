@@ -18,6 +18,7 @@ class DeskripsiHalamanDokumenImpl implements DeskripsiHalamanDokumenInterface
                 "count" => $data->count(),
                 "time" => now()->toDateTimeString()
             ]);
+            
             return $data;
         } catch (\Throwable $th) {
             Log::error("Data deskripsi halaman dokumen gagal diambil", [

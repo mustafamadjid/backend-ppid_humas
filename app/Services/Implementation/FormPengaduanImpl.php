@@ -62,7 +62,7 @@ class FormPengaduanImpl implements FormServiceInterface
                 AktivitasTerbaru::create([
                     'username' => $username,
                     'jenis_aktivitas' => 'update',
-                    'deskripsi_aktivitas' => 'Mengubah status',
+                    'deskripsi_aktivitas' => 'Mengubah status data form pengaduan ('.$data["status"].")",
                     'waktu_aktivitas' => Carbon::now()->toDateTimeString()
                 ]);
 
@@ -91,7 +91,7 @@ class FormPengaduanImpl implements FormServiceInterface
         }
     }
 
-    public function deleteForm($id)
+    public function deleteForm($id,string $username)
     {
         try {
             $form = FormPengaduan::findOrFail($id);
@@ -103,6 +103,14 @@ class FormPengaduanImpl implements FormServiceInterface
             $form->delete();
             Log::info("Data pengaduan berhasil dihapus", [
                 "time" => now()->toDateTimeString()
+            ]);
+
+            // Catat aktivitas
+            AktivitasTerbaru::create([
+                'username' => $username,
+                'jenis_aktivitas' => 'delete',
+                'deskripsi_aktivitas' => 'Menghapus data pengaduan',
+                'waktu_aktivitas' => Carbon::now()->toDateTimeString()
             ]);
             return true;
         }catch (ModelNotFoundException $e){

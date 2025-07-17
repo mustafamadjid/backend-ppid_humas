@@ -9,6 +9,7 @@ use App\Services\FormPermohonanInformasiInterface;
 use App\Services\FormServiceInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -78,8 +79,10 @@ class FormPermohonanInformasiController extends Controller
     public function destroy(string $id)
     {
         try {
+            $user = Auth::user();
+            $username = $user ? $user->username : null;
             
-            $result = $this->form->deleteForm($id);
+            $result = $this->form->deleteForm($id, $username);
 
             if (!$result) {
                 return response()->json([

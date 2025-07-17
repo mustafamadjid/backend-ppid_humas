@@ -58,7 +58,7 @@ class FormPermohonanInformasiImpl implements FormServiceInterface
                 AktivitasTerbaru::create([
                     'username' => $username,
                     'jenis_aktivitas' => 'update',
-                    'deskripsi_aktivitas' => 'Mengubah status',
+                    'deskripsi_aktivitas' => 'Mengubah status data form permohonan informasi ('.$data["status"].")",
                     'waktu_aktivitas' => Carbon::now()->toDateTimeString()
                 ]);
 
@@ -87,12 +87,20 @@ class FormPermohonanInformasiImpl implements FormServiceInterface
         }
     }
 
-    public function deleteForm($id){
+    public function deleteForm($id,string $username){
         try {
             $form = FormPermohonanInformasi::findOrFail($id);
             $form->delete();
             Log::info("Data form permohonan informasi berhasil dihapus", [
                 "time" => now()->toDateTimeString()
+            ]);
+
+            // Catat aktivitas
+            AktivitasTerbaru::create([
+                'username' => $username,
+                'jenis_aktivitas' => 'delete',
+                'deskripsi_aktivitas' => 'Menghapus data form permohonan informasi',
+                'waktu_aktivitas' => Carbon::now()->toDateTimeString()
             ]);
             return true;
         }catch (ModelNotFoundException $e){

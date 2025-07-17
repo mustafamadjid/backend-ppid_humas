@@ -20,7 +20,8 @@ class UserDataServiceController extends Controller
     {
         try {
             $validated = $request->validated();
-            $username = "new user";
+            $user = $request->user();
+            $username = $user ? $user->username : null;
            
 
             $createdUser = $this->userDataService->createData($validated, $username);
