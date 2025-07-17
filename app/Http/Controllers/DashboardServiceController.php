@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FormContactUs;
+use App\Models\FormKeberatan;
+use App\Models\FormPengaduan;
+use App\Models\FormPermohonanInformasi;
 use App\Services\DashboardServiceInterface;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -93,6 +97,90 @@ class DashboardServiceController extends Controller
                     'total' => $count
                 ]
             ]);
+        } catch (\Throwable $th) {
+            throw new HttpException(500, $th->getMessage());
+        }
+    }
+
+    public function countStatusFormContactUs()
+    {
+        try {
+            $model = new FormContactUs();
+            $count = $this->service->countStatusForm($model);
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Total data form contact us berhasil diambil',
+                'data' => [
+                    'total' => $count['total'],
+                    'belum_diproses' => $count['belum_diproses'],
+                    'sedang_diproses' => $count['sedang_diproses'],
+                    'selesai' => $count['selesai']
+                ]
+                ]);
+        } catch (\Throwable $th) {
+            throw new HttpException(500, $th->getMessage());
+        }
+    }
+
+    public function countStatusFormPengaduan()
+    {
+        try {
+            $model = new FormPengaduan();
+            $count = $this->service->countStatusForm($model);
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Total data form pengaduan berhasil diambil',
+                'data' => [
+                    'total' => $count['total'],
+                    'belum_diproses' => $count['belum_diproses'],
+                    'sedang_diproses' => $count['sedang_diproses'],
+                    'selesai' => $count['selesai']
+                ]
+                ]);
+        } catch (\Throwable $th) {
+            throw new HttpException(500, $th->getMessage());
+        }
+    }
+
+    public function countStatusFormPengajuan()
+    {
+        try {
+            $model = new FormKeberatan();
+            $count = $this->service->countStatusForm($model);
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Total data form pengajuan berhasil diambil',
+                'data' => [
+                    'total' => $count['total'],
+                    'belum_diproses' => $count['belum_diproses'],
+                    'sedang_diproses' => $count['sedang_diproses'],
+                    'selesai' => $count['selesai']
+                ]
+                ]);
+        } catch (\Throwable $th) {
+            throw new HttpException(500, $th->getMessage());
+        }
+    }
+
+    public function countStatusFormPermohonan()
+    {
+        try {
+            $model = new FormPermohonanInformasi();
+            $count = $this->service->countStatusForm($model);
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Total data form permohonan berhasil diambil',
+                'data' => [
+                    'total' => $count['total'],
+                    'belum_diproses' => $count['belum_diproses'],
+                    'sedang_diproses' => $count['sedang_diproses'],
+                    'selesai' => $count['selesai']
+                ]
+                ]);
         } catch (\Throwable $th) {
             throw new HttpException(500, $th->getMessage());
         }

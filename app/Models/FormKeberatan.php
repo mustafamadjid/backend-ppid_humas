@@ -19,6 +19,7 @@ class FormKeberatan extends Model
         'email_pemohon',
         'pekerjaan_pemohon',
         'tujuan_pengajuan',
-        'alasan_pengajuan',
+        'alasan_pengajuan',,
+        'status'
     ];
 }

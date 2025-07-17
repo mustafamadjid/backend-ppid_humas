@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\formPengaduanRequest\createFormPengaduanRequest;
+use App\Http\Requests\formPengaduanRequest\updateRequest;
 use App\Models\FormPengaduan;
 use App\Services\FormServiceInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -55,6 +56,32 @@ class FormPengaduanController extends Controller
             ], 200);
         } catch (\Throwable $e) {
             throw new HttpException(500, $e->getMessage());
+        }
+    }
+
+     public function update(updateRequest $request, $id)
+    {
+        try{
+            $validated = $request->validated();
+            $user = $request->user();
+            $username = $user ? $user->username : null;
+
+            $result = $this->form->updateForm($id, $validated, $username);
+
+            if(!$result){
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'Data form pengaduan tidak ditemukan'
+                ], 404);
+            }
+            return response()->json([
+                'status' => 200,
+                'message' => 'Data form pengaduan berhasil diupdate',
+                'data' => $result
+            ], 200);
+           
+        }catch (\Throwable $th) {
+            throw new HttpException(500, $th->getMessage());
         }
     }
 

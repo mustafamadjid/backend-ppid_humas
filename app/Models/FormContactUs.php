@@ -16,5 +16,6 @@ class FormContactUs extends Model
         'no_telp',
         'subjek',
         'pesan',
+        'status'
     ];
 }

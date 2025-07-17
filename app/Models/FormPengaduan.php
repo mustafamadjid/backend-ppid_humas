@@ -18,6 +18,7 @@ class FormPengaduan extends Model
       'nama_terlapor', 
       'jabatan_terlapor', 
       'deskripsi_penyalahgunaan', 
-      'path_file_bukti'
+      'path_file_bukti',
+      'status'
     ];
 }

@@ -26,6 +26,7 @@ class FormPermohonanInformasi extends Model
         'cara_perolehan_informasi',
         'format_informasi',
         'cara_pengiriman_informasi',
+        'status'
     ];
 
     public $timestamps = true;

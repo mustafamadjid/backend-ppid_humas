@@ -19,6 +19,7 @@ use App\Http\Controllers\PegawaiServiceController;
 use App\Http\Controllers\ProfilPpidController;
 use App\Http\Controllers\SematanAplikasiController;
 use App\Http\Controllers\UserDataServiceController;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
 
 // Authentication
@@ -33,7 +34,7 @@ Route::prefix('/ppid')->middleware(['auth:sanctum','throttle:logged-in'])->group
     // User Service Route
     Route::prefix('/user')->middleware('can:access-user')->group(function () {
         // Register
-        Route::post('/register',[UserDataServiceController::class,'store']);
+        Route::post('/',[UserDataServiceController::class,'store']);
         
         // User Data
         Route::controller(UserDataServiceController::class)->group(function () {
@@ -51,30 +52,35 @@ Route::prefix('/ppid')->middleware(['auth:sanctum','throttle:logged-in'])->group
         Route::delete('/{id}', 'destroy');
     });
 
-    // Form Pengaduan
-    Route::prefix('/pengaduan')->controller(FormPengaduanController::class)->group(function () {
-        Route::get('/', 'index');
-        Route::delete('/{id}', 'destroy');
-    });
+    
 
     // Formulir
     Route::prefix('/formulir')->group(function () {
         // Form Keberatan
-        Route::prefix('/keberatan')->controller(FormKeberatanController::class)->group(function () {
+        Route::prefix('/pengajuan-keberatan')->controller(FormKeberatanController::class)->group(function () {
         Route::get('/', 'index');
-        
+        Route::put('/{id}', 'update');
         Route::delete('/{id}', 'destroy');
     });
 
         // Form Permohonan Informasi
         Route::prefix('/permohonan-informasi')->controller(FormPermohonanInformasiController::class)->group(function () {
             Route::get('/', 'index');
+            Route::put('/{id}', 'update');
+            Route::delete('/{id}', 'destroy');
+        });
+
+        // Form Pengaduan
+        Route::prefix('/pengaduan')->controller(FormPengaduanController::class)->group(function () {
+            Route::get('/', 'index');
+            Route::put('/{id}', 'update');
             Route::delete('/{id}', 'destroy');
         });
 
         // Form Contact Us
         Route::prefix('/contact-us')->controller(FormContactUsController::class)->group(function () {
             Route::get('/', 'index');
+            Route::put('/{id}', 'update');
             Route::delete('/{id}', 'destroy');
         });
     });
@@ -170,6 +176,10 @@ Route::prefix('/ppid')->middleware(['auth:sanctum','throttle:logged-in'])->group
         Route::get('/total-form-pengajuan-keberatan', 'countFormPengajuanKeberatan');
         Route::get('/total-form-permohonan', 'countFormPermohonan');
         Route::get('/total-admin', 'countAdmin');
+        Route::get('/total-status-pengaduan', 'countStatusFormPengaduan');
+        Route::get('/total-status-contact-us', 'countStatusFormContactUs');
+        Route::get('/total-status-permohonan-informasi', 'countStatusFormPermohonan');
+        Route::get('/total-status-pengajuan-keberatan', 'countStatusFormPengajuanKeberatan');
     });
 });
 

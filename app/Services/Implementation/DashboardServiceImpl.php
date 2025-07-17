@@ -7,6 +7,7 @@ use App\Models\FormPengaduan;
 use App\Models\FormPermohonanInformasi;
 use App\Models\User;
 use App\Services\DashboardServiceInterface;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
 class DashboardServiceImpl implements DashboardServiceInterface
@@ -89,6 +90,38 @@ class DashboardServiceImpl implements DashboardServiceInterface
                 'trace' => $th->getTraceAsString(),
                 "time" => now()->toDateTimeString()
             ]);
+        }
+    }
+
+    public function countStatusForm(Model $model)
+    {
+        try {
+            $countTotalForm = $model::count();
+            $countBelumDiproses = $model::where('status','belum_diproses')->count();
+            $countSedangDiproses = $model::where('status','sedang_diproses')->count();
+            $countSelesai = $model::where('status','selesai')->count();
+
+            Log::info("Total data form pengajuan berhasil diambil", [
+                
+                "belum_diproses" => $countBelumDiproses,
+                "sedang_diproses" => $countSedangDiproses,
+                "selesai" => $countSelesai,
+                "time" => now()->toDateTimeString()
+            ]);
+
+            return [
+                'total' => $countTotalForm,
+                'belum_diproses' => $countBelumDiproses,
+                'sedang_diproses' => $countSedangDiproses,
+                'selesai' => $countSelesai
+            ];
+        } catch (\Throwable $th) {
+            Log::error("Gagal ambil total data form pengajuan", [
+                'error' => $th->getMessage(),
+                'trace' => $th->getTraceAsString(),
+                "time" => now()->toDateTimeString()
+            ]);
+            throw $th;
         }
     }
 }
