@@ -32,7 +32,7 @@ class createRequest extends FormRequest
                 'max:20480'
             ],
             'order' => [
-                'required',
+                'sometimes',
                 'integer',
                 'min:1',
                 'max:5'
