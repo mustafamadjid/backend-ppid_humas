@@ -144,7 +144,7 @@ class DashboardServiceController extends Controller
         }
     }
 
-    public function countStatusFormPengajuan()
+    public function countStatusFormPengajuanKeberatan()
     {
         try {
             $model = new FormKeberatan();
