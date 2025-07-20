@@ -29,20 +29,13 @@ class updateRequest extends FormRequest
                 'sometimes',
                 'file',
                 'mimes:jpeg,jpg,png',
-                'max:20480'
+                'max:5120'
             ],
-            'order' => [
+            'deskripsi' => [
                 'sometimes',
-                'integer',
-                'min:1',
-                'max:5'
+                'string',
+                'max:30'
             ],
-            'is_active' => [
-                'sometimes',
-                'integer',
-                'min:0',
-                'max:1'
-            ]
         ];
     }
     public function failedValidation(Validator $validator){

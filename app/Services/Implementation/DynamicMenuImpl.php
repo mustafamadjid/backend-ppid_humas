@@ -13,10 +13,7 @@ class DynamicMenuImpl implements DataServiceInterface
     public function createData(array $data, string $username)
     {
         try {
-            $menu = DynamicMenu::create([
-                'judul_menu' => $data['judul_menu'],
-                'url' => $data['url'],
-            ]);
+            $menu = DynamicMenu::create($data);
             Log::info("Data menu berhasil ditambahkan", [
                 "time" => now()->toDateTimeString()
             ]);
@@ -62,6 +59,7 @@ class DynamicMenuImpl implements DataServiceInterface
             $menu = DynamicMenu::findOrFail($id);
             $result = $menu->update($data);
             Log::info("Data menu berhasil diupdate", [
+                "data" => $data,
                 "time" => now()->toDateTimeString()
             ]);
             // Catat aktivitas

@@ -6,6 +6,7 @@ use App\Http\Requests\menuDataRequest\createMenuRequest;
 use App\Http\Requests\menuDataRequest\updateMenuRequest;
 use App\Models\DynamicMenu;
 use App\Services\DataServiceInterface;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class DynamicMenuController extends Controller
@@ -23,7 +24,10 @@ class DynamicMenuController extends Controller
             $username = $user ? $user->username : null;
 
             $data = $this->dynamicMenuService->createData($validated, $username);
-
+            
+            Log::info('Data menu berhasil ditambahkan', [
+                'data' => $validated
+            ]);
             return response()->json([
                 'status' => 200,
                 'message' => 'Data menu berhasil ditambahkan',

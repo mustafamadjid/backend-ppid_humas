@@ -106,7 +106,7 @@ Route::prefix('/ppid')->middleware(['auth:sanctum','throttle:logged-in'])->group
     Route::prefix('/banner-beranda')->controller(BannerBerandaController::class)->group(function(){
         Route::get('/', 'index');
         Route::post('/', 'store');
-        Route::put('/{id}', 'update');
+        Route::post('/{id}', 'update');
         Route::delete('/{id}', 'destroy');
     });
 

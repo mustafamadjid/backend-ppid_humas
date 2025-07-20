@@ -36,6 +36,7 @@ class BannerBerandaImpl implements DataServiceInterface
             $result = BannerBeranda::create($data);
 
             Log::info("Data gambar banner beranda berhasil dibuat", [
+                "data" => $data,
                 "username" => $username,
                 "data_id" => $result->id ?? null,
                 "time" => now()->toDateTimeString()
@@ -68,6 +69,7 @@ class BannerBerandaImpl implements DataServiceInterface
 
             if ($result) {
                 Log::info("Data gambar banner beranda berhasil diupdate", [
+                    "data" => $data,
                     "username" => $username,
                     "data_id" => $id,
                     "time" => now()->toDateTimeString()

@@ -34,6 +34,10 @@ class updateMenuRequest extends FormRequest
                     'sometimes',
                     'string',
                     'url'
+                ],
+                'icon' => [
+                    'required',
+                    'string'
                 ]
         ];
     }

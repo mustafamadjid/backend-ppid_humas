@@ -29,14 +29,14 @@ class createRequest extends FormRequest
                 'required',
                 'file',
                 'mimes:jpeg,jpg,png',
-                'max:20480'
+                'max:5120'
             ],
-            'order' => [
-                'sometimes',
-                'integer',
-                'min:1',
-                'max:5'
+            'deskripsi' => [
+                'required',
+                'string',
+                'max:30'
             ],
+           
             
         ];
     }

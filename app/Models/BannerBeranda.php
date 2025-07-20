@@ -13,8 +13,7 @@ class BannerBeranda extends Model
     public $timestamps = true;
     protected $fillable = [
         'path_gambar',
-        'order',
-        'is_active'
+        'deskripsi'
     ];
 
     protected $casts = [

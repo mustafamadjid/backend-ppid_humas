@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\BannerBerandaRequest\createRequest;
 use App\Http\Requests\BannerBerandaRequest\updateRequest;
 use App\Services\DataServiceInterface;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class BannerBerandaController extends Controller
@@ -30,23 +31,22 @@ class BannerBerandaController extends Controller
     public function store(createRequest $request)
     {
         try {
+           $validated = $request->validated();
             $user = $request->user();
             $username = $user ? $user->username : null;
-            
-            $file = $request->file('file_gambar');
-            $uniqueName = uniqid() . '_' . $file->getClientOriginalName();
-            $path = $file->storePubliclyAs('banner_beranda', $uniqueName, 'public');
 
-            $data = array_merge(
-                $request->validated(),
-                ['path_gambar' => $path]
-            );
+            if($request->hasFile('file_gambar')) {
+                $file = $request->file('file_gambar');
+                $uniqueName = uniqid() . '_' . $file->getClientOriginalName();
+                $path = $file->storePubliclyAs('banner_beranda', $uniqueName, 'public');
+                $validated['path_gambar'] = $path;
+            }
 
-            $result = $this->banner->createData($data, $username);
+            $result = $this->banner->createData($validated, $username);
 
             return response()->json([
                 'status' => 201,
-                'message' => 'Data gambar banner beranda berhasil ditambahkan',
+                'message' => 'Data banner beranda berhasil ditambahkan',
                 'data' => $result
             ], 201);
         } catch (\Throwable $th) {
@@ -57,18 +57,18 @@ class BannerBerandaController extends Controller
     public function update(updateRequest $request, $id)
     {
         try {
-            $data = $request->validated();
+            $validated = $request->validated();
             $user = $request->user();
             $username = $user ? $user->username : null;
 
-            if ($request->hasFile('file_gambar')) {
+            if($request->hasFile('file_gambar')) {
                 $file = $request->file('file_gambar');
                 $uniqueName = uniqid() . '_' . $file->getClientOriginalName();
                 $path = $file->storePubliclyAs('banner_beranda', $uniqueName, 'public');
-                $data['path_gambar'] = $path;
+                $validated['path_gambar'] = $path;
             }
 
-            $result = $this->banner->updateData($id, $data, $username);
+            $result = $this->banner->updateData($id, $validated, $username);
 
             if (!$result) {
                 return response()->json([
@@ -76,6 +76,12 @@ class BannerBerandaController extends Controller
                     'message' => 'Data gambar banner beranda tidak ditemukan'
                 ], 404);
             }
+           Log::info('DATA MASUK:', [
+    'all' => $request->all(),
+    'file' => $request->file('file_gambar'),
+    'hasFile' => $request->hasFile('file_gambar'),
+]);
+
 
             return response()->json([
                 'status' => 200,
