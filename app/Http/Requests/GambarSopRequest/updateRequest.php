@@ -31,12 +31,11 @@ class updateRequest extends FormRequest
                 'mimes:jpeg,jpg,png',
                 'max:20480'
             ],
-            'order' => [
+           'judul_sop' => [
                 'sometimes',
-                'integer',
-                'min:1',
-                'max:5'
-            ],
+                'string',
+                'max:50'
+            ]
         ];
     }
     public function failedValidation(Validator $validator){

@@ -10,8 +10,8 @@ class GambarSop extends Model
     use HasFactory;
     protected $table = 'gambar_sop_beranda';
     protected $primaryKey = 'id_gambar';
-    protected $fillable = ['path_gambar', 'order', 'is_active'];
+    protected $fillable = ['path_gambar','judul_sop'];
     public $timestamps = true;
 
-    protected $casts = ['is_active' => 'boolean'];
+
 }

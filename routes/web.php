@@ -114,7 +114,7 @@ Route::prefix('/ppid')->middleware(['auth:sanctum','throttle:logged-in'])->group
     Route::prefix('/gambar-sop')->controller(GambarSopController::class)->group(function(){
         Route::get('/', 'index');
         Route::post('/', 'store');
-        Route::put('/{id}', 'update');
+        Route::post('/{id}', 'update');
         Route::delete('/{id}', 'destroy');
     });
 
@@ -162,7 +162,7 @@ Route::prefix('/ppid')->middleware(['auth:sanctum','throttle:logged-in'])->group
     Route::prefix('/infografis')->controller(InfografisServiceController::class)->group(function(){
         Route::get('/', 'index');
         Route::post('/', 'store');
-        Route::put('/{id}', 'update');
+        Route::post('/{id}', 'update');
         Route::delete('/{id}', 'destroy');
     });
 

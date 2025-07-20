@@ -7,6 +7,7 @@ use App\Services\DataServiceInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class InfografisServiceImpl implements DataServiceInterface
 {
@@ -94,6 +95,10 @@ class InfografisServiceImpl implements DataServiceInterface
     {
         try {
             $result = Infografis::findOrFail($id);
+            if($result->path_infografis && Storage::disk('public')->exists($result->path_infografis)) {
+                Storage::disk('public')->delete($result->path_infografis);
+            }
+
             $delete = $result->delete();
             if ($delete) {
                 Log::info("Data infografis berhasil dihapus", [
