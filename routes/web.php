@@ -14,6 +14,7 @@ use App\Http\Controllers\FormPermohonanInformasiController;
 use App\Http\Controllers\GambarSopController;
 use App\Http\Controllers\InfografisServiceController;
 use App\Http\Controllers\JabatanOrganisasiController;
+use App\Http\Controllers\KategoriDokumenController;
 use App\Http\Controllers\MaklumatPelayananController;
 use App\Http\Controllers\PegawaiServiceController;
 use App\Http\Controllers\ProfilPpidController;
@@ -90,8 +91,22 @@ Route::prefix('/ppid')->middleware(['auth:sanctum','throttle:logged-in'])->group
     Route::prefix('/dokumen-publik')->controller(DokumenPublikController::class)->group(function () {
         Route::get('/', 'index');
         Route::post('/', 'store');
+        Route::post('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
+    });
+
+    // Kategori Dokumen
+    Route::prefix('/kategori-dokumen')->controller(KategoriDokumenController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
         Route::put('/{id}', 'update');
         Route::delete('/{id}', 'destroy');
+
+        // By jenis
+        Route::get('/informasi-publik','getKategoriInformasiPublik');
+        Route::get('/layanan-informasi','getKategoriLayananInformasi');
+        Route::get('/pelayanan','getKategoriPelayanan');
+        Route::get('/lainnya','getKategoriLainnya');
     });
 
     // Maklumat Pelayanan

@@ -8,11 +8,13 @@ use App\Http\Controllers\DynamicMenuController;
 use App\Http\Controllers\GambarSopController;
 use App\Http\Controllers\InfografisServiceController;
 use App\Http\Controllers\JabatanOrganisasiController;
+use App\Http\Controllers\KategoriDokumenController;
 use App\Http\Controllers\MaklumatPelayananController;
 use App\Http\Controllers\PegawaiServiceController;
 use App\Http\Controllers\ProfilPpidController;
 use App\Http\Controllers\SematanAplikasiController;
 use App\Http\Controllers\UserDataServiceController;
+use App\Models\KategoriDokumen;
 use App\Services\DataServiceInterface;
 use App\Services\Implementation\AktivitasTerbaruImpl;
 use App\Services\Implementation\BannerBerandaImpl;
@@ -20,6 +22,7 @@ use App\Services\Implementation\DynamicMenuImpl;
 use App\Services\Implementation\GambarSopServiceImpl;
 use App\Services\Implementation\InfografisServiceImpl;
 use App\Services\Implementation\JabatanOrganisasiServiceImpl;
+use App\Services\Implementation\KategoriDokumenImpl;
 use App\Services\Implementation\MaklumatPelayananServiceImpl;
 use App\Services\Implementation\PegawaiServiceImpl;
 use App\Services\Implementation\ProfilPpidServiceImpl;
@@ -90,6 +93,10 @@ class DataServiceProvider extends ServiceProvider implements DeferrableProvider
         ->needs(DataServiceInterface::class)
         ->give(InfografisServiceImpl::class);
 
+        // Binding Kategori Dokumen
+        $this->app->when(KategoriDokumenController::class)
+        ->needs(DataServiceInterface::class)
+        ->give(KategoriDokumenImpl::class);
        
 
     }
