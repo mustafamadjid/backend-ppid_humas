@@ -9,4 +9,5 @@ return [
     App\Providers\DeskripsiHalamanDokumenProvider::class,
     App\Providers\DokumenServiceProvider::class,
     App\Providers\FormServiceProvider::class,
+    App\Providers\VisitorProvider::class,
 ];

@@ -20,6 +20,7 @@ use App\Http\Controllers\PegawaiServiceController;
 use App\Http\Controllers\ProfilPpidController;
 use App\Http\Controllers\SematanAplikasiController;
 use App\Http\Controllers\UserDataServiceController;
+use App\Http\Controllers\VisitorController;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
 
@@ -232,6 +233,13 @@ Route::get('/sematan-aplikasi', [SematanAplikasiController::class,'index']);
 // Infografis
 Route::get('/infografis', [InfografisServiceController::class,'index']);
 
+});
+
+// Web visitor
+Route::prefix('/visitor')->controller(VisitorController::class)->group(function(){
+    Route::post('/', 'store');
+    Route::get('/total-visitor', 'getTotalVisitor');
+    Route::get('/total-visitor-today', 'getVisitorToday');
 });
 
 
