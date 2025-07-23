@@ -48,7 +48,6 @@ Route::prefix('/ppid')->middleware(['auth:sanctum','throttle:logged-in'])->group
 
      // Dynamic Menu
      Route::prefix('/menu-beranda')->controller(DynamicMenuController::class)->group(function () {
-        Route::get('/', 'index');
         Route::post('/', 'store');
         Route::put('/{id}', 'update');
         Route::delete('/{id}', 'destroy');
@@ -112,7 +111,7 @@ Route::prefix('/ppid')->middleware(['auth:sanctum','throttle:logged-in'])->group
 
     // Maklumat Pelayanan
     Route::prefix('/maklumat-pelayanan')->controller(MaklumatPelayananController::class)->group(function(){
-        Route::get('/', 'index');
+        
         Route::post('/', 'store');
         Route::put('/{id}', 'update');
         Route::delete('/{id}', 'destroy');
@@ -120,7 +119,7 @@ Route::prefix('/ppid')->middleware(['auth:sanctum','throttle:logged-in'])->group
 
     // Banner Beranda
     Route::prefix('/banner-beranda')->controller(BannerBerandaController::class)->group(function(){
-        Route::get('/', 'index');
+        
         Route::post('/', 'store');
         Route::post('/{id}', 'update');
         Route::delete('/{id}', 'destroy');
@@ -128,7 +127,6 @@ Route::prefix('/ppid')->middleware(['auth:sanctum','throttle:logged-in'])->group
 
     // Gambar SOP
     Route::prefix('/gambar-sop')->controller(GambarSopController::class)->group(function(){
-        Route::get('/', 'index');
         Route::post('/', 'store');
         Route::post('/{id}', 'update');
         Route::delete('/{id}', 'destroy');
@@ -136,7 +134,6 @@ Route::prefix('/ppid')->middleware(['auth:sanctum','throttle:logged-in'])->group
 
     // Deskripsi halaman dokumen
     Route::prefix('/deskripsi-halaman-dokumen')->controller(DeskripsiHalamanDokumenController::class)->group(function(){
-        Route::get('/', 'index');
         Route::post('/', 'store');
         Route::put('/{id}', 'update');
         Route::delete('/{id}', 'destroy');
@@ -144,7 +141,6 @@ Route::prefix('/ppid')->middleware(['auth:sanctum','throttle:logged-in'])->group
 
     // Profil ppid
     Route::prefix('/profil-ppid')->controller(ProfilPpidController::class)->group(function(){
-        Route::get('/', 'index');
         Route::post('/', 'store');
         Route::put('/{id}', 'update');
         Route::delete('/{id}', 'destroy');
@@ -152,7 +148,6 @@ Route::prefix('/ppid')->middleware(['auth:sanctum','throttle:logged-in'])->group
 
     // Sematan aplikasi
     Route::prefix('/sematan-aplikasi')->controller(SematanAplikasiController::class)->group(function(){
-        Route::get('/', 'index');
         Route::post('/', 'store');
         Route::put('/{id}', 'update');
         Route::delete('/{id}', 'destroy');
@@ -176,7 +171,6 @@ Route::prefix('/ppid')->middleware(['auth:sanctum','throttle:logged-in'])->group
 
     // Infografis
     Route::prefix('/infografis')->controller(InfografisServiceController::class)->group(function(){
-        Route::get('/', 'index');
         Route::post('/', 'store');
         Route::post('/{id}', 'update');
         Route::delete('/{id}', 'destroy');
@@ -224,23 +218,39 @@ Route::get('/dokumen/{kategori}/{tahun}',[DokumenPublikController::class,'getDat
 // Deskripsi halaman dokumen by kategori
 Route::get('/deskripsi-halaman-dokumen/{kategori}',[DeskripsiHalamanDokumenController::class,'getDataByKategori']);
 
-// Profil ppid
-Route::get(('/profil-ppid'),[ProfilPpidController::class,'index']);
-
-// Sematan Aplikasi
-Route::get('/sematan-aplikasi', [SematanAplikasiController::class,'index']);
-
-// Infografis
-Route::get('/infografis', [InfografisServiceController::class,'index']);
-
-});
-
 // Web visitor
 Route::prefix('/visitor')->controller(VisitorController::class)->group(function(){
     Route::post('/', 'store');
     Route::get('/total-visitor', 'getTotalVisitor');
     Route::get('/total-visitor-today', 'getVisitorToday');
 });
+
+// Beranda
+
+// Menu beranda
+Route::get('/menu-beranda', [DynamicMenuController::class, 'index']);
+
+// Maklumat Pelayanan
+Route::get('/maklumat-pelayanan', [MaklumatPelayananController::class, 'index']);
+
+// Banner Beranda
+Route::get('/banner-beranda', [BannerBerandaController::class, 'index']);
+
+// SOP
+  Route::get('/sop', [GambarSopController::class, 'index']);
+
+
+//  Profil PPID
+ Route::get('/profil-ppid', [ProfilPpidController::class, 'index']);
+
+//  Sematan Aplikasi
+ Route::get('/sematan-aplikasi', [SematanAplikasiController::class, 'index']);
+
+//  Infografis
+ Route::get('/infografis', [InfografisServiceController::class, 'index']);
+
+});
+
 
 
 

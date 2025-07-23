@@ -14,10 +14,7 @@ class ProfilPpid extends Model
     public $timestamps = true;
 
     protected $fillable = [
-        'deskripsi_profil',
-        'visi_ppid',
-        'misi_ppid',
-        'tugas_ppid',
-        'fungsi_ppid',
+        'deskripsi',
+        'kategori'
     ];
 }
