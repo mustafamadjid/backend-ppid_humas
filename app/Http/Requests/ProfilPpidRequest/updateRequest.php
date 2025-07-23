@@ -25,30 +25,14 @@ class updateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'deskripsi_profil' => [
+            'deskripsi' => [
                 'sometimes', 
                 'string',
             ],
-            'visi_ppid' =>[
-                'sometimes',
+            'kategori' => [
+                'sometimes', 
                 'string',
-                'max:255'
             ],
-            'misi_ppid' =>[
-                'sometimes',
-                'string',
-                'max:255'
-            ],
-            'tugas_ppid' =>[
-                'sometimes',
-                'string',
-                'max:255'
-            ],
-            'fungsi_ppid' =>[
-                'sometimes',
-                'string',
-                'max:255'
-            ]
         ];
     }
     public function failedValidation(Validator $validator){

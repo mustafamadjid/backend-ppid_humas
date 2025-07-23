@@ -47,6 +47,10 @@ class updateDokumenRequest extends FormRequest
                 'file',
                 'mimes:pdf',
                 'max:20480'
+            ],
+            'deskripsi_halaman' => [
+                'sometimes',
+                'string'
             ]
         ];
     }

@@ -25,30 +25,15 @@ class createRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'deskripsi_profil' => [
+            'deskripsi' => [
                 'required', 
                 'string',
             ],
-            'visi_ppid' =>[
-                'required',
+            'kategori' => [
+                'required', 
                 'string',
-                'max:255'
             ],
-            'misi_ppid' =>[
-                'required',
-                'string',
-                'max:255'
-            ],
-            'tugas_ppid' =>[
-                'required',
-                'string',
-                'max:255'
-            ],
-            'fungsi_ppid' =>[
-                'required',
-                'string',
-                'max:255'
-            ]
+            
         ];
     }
     public function failedValidation(Validator $validator){
