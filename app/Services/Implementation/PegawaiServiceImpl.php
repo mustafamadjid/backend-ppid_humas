@@ -124,8 +124,8 @@ class PegawaiServiceImpl implements DataServiceInterface
         try {
             $pegawai = Pegawai::findOrFail($id);
 
-            if($pegawai->path_file_foto && Storage::disk('public')->exists($pegawai->path_file_foto)){
-                Storage::disk('public')->delete($pegawai->path_file_foto);
+            if($pegawai->path_foto_pegawai && Storage::disk('public')->exists($pegawai->path_foto_pegawai)){
+                Storage::disk('public')->delete($pegawai->path_foto_pegawai);
             }
 
             $result = $pegawai->delete();

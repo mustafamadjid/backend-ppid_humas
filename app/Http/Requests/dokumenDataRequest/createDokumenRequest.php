@@ -46,11 +46,16 @@ class createDokumenRequest extends FormRequest
                 'required',
                 'file',
                 'mimes:pdf',
-                'max:20480'
+                'max:5120'
             ],
             'deskripsi_halaman' => [
                 'sometimes',
                 'string'
+            ],
+            'jenis_dokumen' => [
+                'required',
+                'string',
+                'max:50'
             ]
         ];
     }

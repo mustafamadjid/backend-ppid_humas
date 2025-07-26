@@ -44,6 +44,16 @@ class createRequest extends FormRequest
             'id_jabatan' => [
                 'required',
                 'integer'
+            ],
+            'nip' => [
+                'required',
+                'string',
+                'max:100'
+            ],
+            'status' => [
+                'sometimes',
+                'string',
+                'max:20'
             ]
         ];
     }

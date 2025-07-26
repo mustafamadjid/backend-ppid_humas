@@ -44,6 +44,16 @@ class updateRequest extends FormRequest
             'id_jabatan' => [
                 'sometimes',
                 'integer'
+            ],
+            'nip' => [
+                'required',
+                'string',
+                'max:100'
+            ],
+            'status' => [
+                'sometimes',
+                'string',
+                'max:20'
             ]
         ];
     }

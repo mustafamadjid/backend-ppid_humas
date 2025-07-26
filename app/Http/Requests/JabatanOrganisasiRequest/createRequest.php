@@ -29,6 +29,10 @@ class createRequest extends FormRequest
                 'string',
                 'max:30',
                 'required',
+            ],
+            'id_atasan' =>[
+                'integer',
+                'sometimes',
             ]
         ];
     }

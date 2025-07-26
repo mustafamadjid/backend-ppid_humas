@@ -18,6 +18,7 @@ class DokumenPublik extends Model
         'path_dokumen',
         'kategori_dokumen',
         'tahun_dokumen',
-        'deskripsi_halaman'
+        'deskripsi_halaman',
+        'jenis_dokumen'
     ];
 }

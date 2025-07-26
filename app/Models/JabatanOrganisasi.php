@@ -11,7 +11,8 @@ class JabatanOrganisasi extends Model
     protected $table = 'jabatan_organisasi';
     protected $primaryKey = 'id_jabatan';
     protected $fillable = [
-        'jabatan'
+        'jabatan',
+        'id_atasan'
     ];
     public $timestamps = true;
 

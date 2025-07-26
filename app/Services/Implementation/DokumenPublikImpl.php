@@ -7,6 +7,7 @@ use App\Services\DokumenServiceInterface;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class DokumenPublikImpl implements DokumenServiceInterface
 {
@@ -32,7 +33,8 @@ class DokumenPublikImpl implements DokumenServiceInterface
                                 ->where('tahun_dokumen', $tahun)
                                 ->firstOrFail();
             Log::info("Dokumen publik berhasil diambil", [
-                "time" => now()->toDateTimeString()
+                "time" => now()->toDateTimeString(),
+                "data" => $data
             ]);
             return $data;
         } catch(ModelNotFoundException $e) {
@@ -147,6 +149,11 @@ class DokumenPublikImpl implements DokumenServiceInterface
     {
         try {
             $dokumen = DokumenPublik::findOrFail($id);
+
+            if($dokumen->path_dokumen && Storage::disk('public')->exists($dokumen->path_dokumen)) {
+                Storage::disk('public')->delete($dokumen->path_dokumen);
+            }
+
             $result = $dokumen->delete();
 
             if ($result) {

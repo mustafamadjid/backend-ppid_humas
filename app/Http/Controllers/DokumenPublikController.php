@@ -6,8 +6,11 @@ use App\Http\Requests\dokumenDataRequest\createDokumenRequest;
 use App\Http\Requests\dokumenDataRequest\updateDokumenRequest;
 use App\Models\DokumenPublik;
 use App\Services\DokumenServiceInterface;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+
+use function Laravel\Prompts\error;
 
 class DokumenPublikController extends Controller
 {
@@ -30,9 +33,10 @@ class DokumenPublikController extends Controller
         }
     }
 
-    public function getDataByTahun($tahun, $kategori){
+    public function getDataByTahunKategori($kategori, $tahun){
         try {
-            $data = $this->dokumen->getDataByTahun($tahun, $kategori);
+            
+            $data = $this->dokumen->getDataByTahun((int)$tahun, $kategori);
 
             if(!$data){
                 return response()->json([
@@ -47,6 +51,9 @@ class DokumenPublikController extends Controller
                 $url = null;
             }
 
+            Log::info("Data dokumen berhasil diambil", [
+                "time" => now()->toDateTimeString()
+            ]);
             return response()->json([
                 'status' => 200,
                 'message' => "Data dokumen berhasil diambil",
@@ -55,6 +62,7 @@ class DokumenPublikController extends Controller
             ]);
             
         }catch (\Throwable $e) {
+            Log::error( $e->getMessage());
             throw new HttpException(500, $e->getMessage());
         }
     }
@@ -83,6 +91,61 @@ class DokumenPublikController extends Controller
                 'url' => $url
             ]);
         } catch (\Throwable $th) {
+            throw new HttpException(500, $th->getMessage());
+        }
+    }
+
+    public function getAllTahun(){
+    try {
+        $data = DokumenPublik::select('tahun_dokumen')->distinct()->orderBy('tahun_dokumen', 'asc')->pluck('tahun_dokumen');
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Data tahun dokumen berhasil diambil',
+            'data' => $data
+        ], 200);
+    } catch (\Throwable $th) {
+        throw new HttpException(500, $th->getMessage());
+        }
+    }
+
+    public function getAllKategori(){
+        try {
+            $data = DokumenPublik::select('kategori_dokumen')->distinct()->orderBy('kategori_dokumen', 'asc')->pluck('kategori_dokumen');
+
+            Log::info("Data kategori dokumen berhasil diambil", [
+                "time" => now()->toDateTimeString()
+            ]);
+            return response()->json([
+                'status' => 200,
+                'message' => 'Data kategori dokumen berhasil diambil',
+                'data' => $data
+            ], 200);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            throw new HttpException(500, $th->getMessage());
+        }
+    }
+
+    public function getAllKategoriByJenis($jenis_dokumen){
+        try {
+            $data = DokumenPublik::where('jenis_dokumen',$jenis_dokumen)
+                    ->select('kategori_dokumen')
+                    ->distinct()
+                    ->orderBy('kategori_dokumen', 'asc')
+                    ->pluck('kategori_dokumen');
+
+            Log::info("Data kategori dokumen berhasil diambil", [
+                "time" => now()->toDateTimeString()
+            ]);
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Data kategori dokumen berhasil diambil',
+                'data' => $data
+            ], 200);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
             throw new HttpException(500, $th->getMessage());
         }
     }

@@ -29,6 +29,10 @@ class updateRequest extends FormRequest
                 'string',
                 'max:30',
                 'sometimes',
+            ],
+            'id_atasan' =>[
+                'integer',
+                'sometimes',
             ]
         ];
     }

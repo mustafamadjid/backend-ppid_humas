@@ -19,6 +19,7 @@ use App\Http\Controllers\MaklumatPelayananController;
 use App\Http\Controllers\PegawaiServiceController;
 use App\Http\Controllers\ProfilPpidController;
 use App\Http\Controllers\SematanAplikasiController;
+use App\Http\Controllers\tahunDokumenTampilController;
 use App\Http\Controllers\UserDataServiceController;
 use App\Http\Controllers\VisitorController;
 use Illuminate\Support\Facades\Password;
@@ -155,7 +156,6 @@ Route::prefix('/ppid')->middleware(['auth:sanctum','throttle:logged-in'])->group
 
      // Jabatan Organisasi
      Route::prefix('/jabatan-organisasi')->controller(JabatanOrganisasiController::class)->group(function(){
-        Route::get('/', 'index');
         Route::post('/', 'store');
         Route::put('/{id}', 'update');
         Route::delete('/{id}', 'destroy');
@@ -163,9 +163,8 @@ Route::prefix('/ppid')->middleware(['auth:sanctum','throttle:logged-in'])->group
 
     // Pegawai
     Route::prefix('/pegawai')->controller(PegawaiServiceController::class)->group(function(){
-        Route::get('/', 'index');
         Route::post('/', 'store');
-        Route::put('/{id}', 'update');
+        Route::post('/{id}', 'update');
         Route::delete('/{id}', 'destroy');
     });
 
@@ -211,8 +210,22 @@ Route::prefix('/formulir')->group(function () {
     Route::post('/contact-us', [FormContactUsController::class,'store']);
 });
 
-// Dokumen berdasarkan tahun
-Route::get('/dokumen/{kategori}/{tahun}',[DokumenPublikController::class,'getDataByTahun']);
+// Dokumen route
+Route::prefix('/dokumen')->controller(DokumenPublikController::class)->group(function () {
+    // Dokumen berdasarkan tahun
+    Route::get('/dokumen-tahun/{kategori}/{tahun}','getDataByTahunKategori');
+
+    // Ambil semua kategori yang ada di dokumen berdasarkan jenis
+    Route::get('/kategori/{jenis_dokumen}','getAllKategoriByJenis');
+    
+});
+
+// Ambil tahun untuk dokumen yang tampil ke pengjunjung
+Route::prefix('/tahun-dokumen-pengunjung')->controller(tahunDokumenTampilController::class)->group(function () {
+   Route::get('/','index');
+   Route::post('/','store');
+   Route::put('/{id}','update'); 
+});
 
 
 // Deskripsi halaman dokumen by kategori
@@ -248,6 +261,14 @@ Route::get('/banner-beranda', [BannerBerandaController::class, 'index']);
 
 //  Infografis
  Route::get('/infografis', [InfografisServiceController::class, 'index']);
+
+//  Jabatan Organisasi
+Route::get('/jabatan-organisasi', [JabatanOrganisasiController::class, 'index']);
+
+// Pegawai 
+Route::get('/pegawai', [PegawaiServiceController::class, 'index']);
+
+
 
 });
 
