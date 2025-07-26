@@ -217,6 +217,9 @@ Route::prefix('/dokumen')->controller(DokumenPublikController::class)->group(fun
 
     // Ambil semua kategori yang ada di dokumen berdasarkan jenis
     Route::get('/kategori/{jenis_dokumen}','getAllKategoriByJenis');
+
+    // Ambil hanya tahun dokumen
+    Route::get('/tahun-dokumen','getAllTahun');
     
 });
 
