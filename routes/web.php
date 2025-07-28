@@ -220,6 +220,9 @@ Route::prefix('/dokumen')->controller(DokumenPublikController::class)->group(fun
 
     // Ambil hanya tahun dokumen
     Route::get('/tahun-dokumen','getAllTahun');
+
+    // Download dokumen
+    Route::get('/download/{filename}', 'downloadData');
     
 });
 

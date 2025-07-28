@@ -150,28 +150,36 @@ class DokumenPublikController extends Controller
         }
     }
 
-    public function downloadData($filename){
-        try {
-            if (strpos($filename, '..') !== false) {
-                return response()->json([
-                    'status' => 400,
-                    'message' => 'Path tidak valid'
-                ], 400);
-            }
-    
-            if (!Storage::disk('public')->exists($filename)) {
-                return response()->json([
-                    'status' => 404,
-                    'message' => 'File tidak ditemukan'
-                ], 404);
-            }
-    
-            return response()->download(storage_path('app/public/' . $filename));
-    
-        } catch (\Throwable $e) {
-            throw new HttpException(500, $e->getMessage());
+    public function downloadData($filename)
+{
+    try {
+        // Cegah directory traversal 
+        if (strpos($filename, '..') !== false) {
+            return response()->json([
+                'status' => 400,
+                'message' => 'Path tidak valid'
+            ], 400);
         }
+
+        
+        if (!Storage::disk('public')->exists($filename)) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'File tidak ditemukan'
+            ], 404);
+        }
+
+        $path = storage_path('app/public/' . $filename);
+
+        // Download file
+        return response()->download($path);
+    } catch (\Throwable $e) {
+        Log::error($e->getMessage());
+        throw new HttpException(500, $e->getMessage());
     }
+}
+
+
     
 
     public function store(createDokumenRequest $request){
