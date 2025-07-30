@@ -16,4 +16,14 @@ class JabatanOrganisasi extends Model
     ];
     public $timestamps = true;
 
+    public function bawahan()
+    {
+        return $this->hasMany(JabatanOrganisasi::class, 'id_atasan', 'id_jabatan');
+    }
+
+    public function pegawai()
+    {
+        return $this->hasMany(Pegawai::class, 'id_jabatan', 'id_jabatan');
+    }
+
 }

@@ -20,6 +20,7 @@ class AuthServiceImpl implements AuthServiceInterface
            if(Hash::check($password,$user->password)){
             Log::info('Percobaan login berhasil',[
                 'email' => $user->email,
+                'role' => $user->role,
                 "time" => now()->toDateTimeString()
             ]);
             AktivitasTerbaru::create([
@@ -28,7 +29,12 @@ class AuthServiceImpl implements AuthServiceInterface
                     'deskripsi_aktivitas' => 'Berhasil Login',
                     'waktu_aktivitas' => Carbon::now()->toDateTimeString()
                 ]);
-                return $user->createToken($user->email)->plainTextToken;
+
+                $token = $user->createToken($user->email)->plainTextToken;
+                return [
+                    "token" => $token,
+                    "role" => $user->role
+                ];
            }else{
                Log::warning('Percobaan login gagal (password tidak sesuai)',[
                 'email' => $user->email,

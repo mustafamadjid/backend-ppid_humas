@@ -19,6 +19,7 @@ use App\Http\Controllers\MaklumatPelayananController;
 use App\Http\Controllers\PegawaiServiceController;
 use App\Http\Controllers\ProfilPpidController;
 use App\Http\Controllers\SematanAplikasiController;
+use App\Http\Controllers\StrukturOrganisasiController;
 use App\Http\Controllers\tahunDokumenTampilController;
 use App\Http\Controllers\UserDataServiceController;
 use App\Http\Controllers\VisitorController;
@@ -279,6 +280,9 @@ Route::get('/jabatan-organisasi', [JabatanOrganisasiController::class, 'index'])
 
 // Pegawai 
 Route::get('/pegawai', [PegawaiServiceController::class, 'index']);
+
+// Struktut organisasi
+Route::get('/struktur-organisasi', [StrukturOrganisasiController::class, 'getStruktur']);
 
 
 // Reset Password

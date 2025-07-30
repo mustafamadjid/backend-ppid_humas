@@ -36,7 +36,8 @@ class AuthController extends Controller
                     'status' => 200,
                     'message' => 'Login berhasil',
                     'data' => [
-                        'token' => $auth
+                        'token' => $auth["token"],
+                        'role' => $auth["role"]
                     ]
                     ]);
             }        
