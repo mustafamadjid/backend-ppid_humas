@@ -33,7 +33,9 @@ class AuthServiceImpl implements AuthServiceInterface
                 $token = $user->createToken($user->email)->plainTextToken;
                 return [
                     "token" => $token,
-                    "role" => $user->role
+                    "role" => $user->role,
+                    "email" => $user->email,
+                    "username" => $user->username
                 ];
            }else{
                Log::warning('Percobaan login gagal (password tidak sesuai)',[

@@ -67,7 +67,16 @@ class UserDataServiceImpl implements DataServiceInterface
     {
         try {
             $user = User::findOrFail($id);
-            $result = $user->update($data);
+
+            if(empty($data['password'])) {
+                unset($data['password']);
+                $result = $user->update($data);
+            } else {
+                $data['password'] = Hash::make($data['password']);
+                $result = $user->update($data);
+            }
+
+            
 
             Log::info("Data user berhasil diupdate", [
                 "time" => now()->toDateTimeString()
