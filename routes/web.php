@@ -26,6 +26,7 @@ use App\Http\Controllers\VisitorController;
 use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request as HttpRequest;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Request;
@@ -51,8 +52,11 @@ Route::prefix('/ppid')->middleware(['auth:sanctum','throttle:logged-in'])->group
             Route::get('/', 'index');
             Route::put('/{id}', 'update');
             Route::delete('/{id}', 'destroy');
+
         });
     });
+    // Ambil user login
+    Route::get('/user-logged-in', [UserDataServiceController::class, 'userLoggedIn']);
 
      // Dynamic Menu
      Route::prefix('/menu-beranda')->controller(DynamicMenuController::class)->group(function () {
@@ -334,6 +338,10 @@ Route::post('/reset-password', function (HttpRequest $request) {
 });
 
 
-
+// Buat seeder super admin
+Route::get('/seeder-admin',function(){
+    $res = Artisan::call('db:seed --class=SuperAdminSeeder');
+     echo $res;
+});
 
 

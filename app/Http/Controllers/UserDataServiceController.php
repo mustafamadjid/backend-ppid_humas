@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\userDataRequest\createUserRequest;
 use App\Http\Requests\userDataRequest\UpdateUserRequest;
 use App\Services\DataServiceInterface;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class UserDataServiceController extends Controller
@@ -49,6 +50,19 @@ class UserDataServiceController extends Controller
                 'status' => 200,
                 'message' => 'Data semua user berhasil diambil',
                 'data' => $data
+            ], 200);
+        } catch (\Throwable $e) {
+            throw new HttpException(500, $e->getMessage());
+        }
+    }
+
+    public function userLoggedIn(Request $request){
+        try {
+            $user = $request->user();
+            return response()->json([
+                'status' => 200,
+                'message' => 'Data user berhasil diambil',
+                'data' => $user
             ], 200);
         } catch (\Throwable $e) {
             throw new HttpException(500, $e->getMessage());
